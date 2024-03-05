@@ -1,0 +1,54 @@
+body {
+    background-color: powderblue;
+}
+
+.timerInput {
+    background-color: aqua;
+    position: relative;
+}
+
+.input-container {
+    position: relative;
+}
+
+div,
+label {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.timer {
+    height: 210px;
+    width: 12%;
+    text-align: center;
+    margin-left: 2%;
+    margin-top: 2%;
+    border: 3px solid black;
+    border-radius: 25px;
+    background-color: cornflowerblue;
+}
+
+#countdown {
+    font-size: 40px;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th,
+td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+.scheduleTable {
+    margin-top: 2.2%;
+    margin-left: 10%;
+}

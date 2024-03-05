@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>ADHD Tools</title>
+</head>
+
+<body>
+    <div class="timer">
+        <br>
+        <button id="timerStart" onclick="startOrRestartPomodoro()">Start Timer</button>
+        <br>
+        <div id="countdown">--:--</div>
+        <br>
+        <label for="work" class="timerLabel">Duration of Work (minutes):</label><br>
+        <div>
+            <input type="number" id="work" name="work" class="timerInput" min="1" max="999" value="25">
+        </div>
+        <br><br>
+        <label for="break" class="timerLabel">Duration of Break (minutes):</label><br>
+        <div>
+            <input type="number" id="break" name="break" class="timerInput" min="1" max="999" value="5"><br>
+        </div>
+    </div>
+
+    <div class="scheduleTable">
+        <table id="scheduleTable">
+            <thead>
+                <tr>
+                    <th>Subject (in order of priority)</th>
+                    <th>Time Needed (minutes)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Table rows for generated schedule will go here -->
+            </tbody>
+        </table>
+    </div>
+
+    <br><br><br><br>
+
+    <div>
+        <table id="editableTable">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Urgency</th>
+                    <th>Workload</th>
+                    <th>Enjoyment</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td contenteditable="true">Math</td>
+                    <td contenteditable="true">5</td>
+                    <td contenteditable="true">3</td>
+                    <td contenteditable="true">7</td>
+                </tr>
+                <tr>
+                    <td contenteditable="true">Science</td>
+                    <td contenteditable="true">7</td>
+                    <td contenteditable="true">4</td>
+                    <td contenteditable="true">6</td>
+                </tr>
+            </tbody>
+        </table>
+        <br>
+        <button onclick="addRow()">Add Column</button>
+        <button onclick="removeRow()">Remove Column</button>
+        <button onclick="generateSchedule()">Generate a schedule</button>
+    </div>
+
+    <script>
+        var timerRunning = false;
+        var countdownInterval;
+
+        function startOrRestartPomodoro() {
+            if (timerRunning) {
+                clearInterval(countdownInterval);
+                timerRunning = false;
+                document.getElementById("countdown").innerHTML = "--:--";
+                document.getElementById("timerStart").innerHTML = "Start Timer";
+            } else {
+                var workDuration = parseInt(document.getElementById("work").value);
+                var breakDuration = parseInt(document.getElementById("break").value);
+                document.getElementById("timerStart").innerHTML = "Stop Timer";
+
+                displayCountdown(workDuration * 60, "Work");
+                timerRunning = true;
+            }
+        }
+
+        function displayCountdown(duration, type) {
+            var countdownDisplay = document.getElementById("countdown");
+
+            countdownInterval = setInterval(function() {
+                var minutes = Math.floor(duration / 60);
+                var seconds = duration % 60;
+                countdownDisplay.innerHTML = formatTime(minutes) + ":" + formatTime(seconds);
+                duration--;
+                if (duration < 0) {
+                    clearInterval(countdownInterval);
+                    timerRunning = false;
+                    if (type === "Work") {
+                        alert("Work time's up! Take a break.");
+                        displayCountdown(parseInt(document.getElementById("break").value) * 60, "Break");
+
+                    } else {
+                        alert("Break time's up! Time to start working again.");
+                        displayCountdown(parseInt(document.getElementById("work").value) * 60, "Work");
+                    }
+                }
+            }, 1000);
+
+            function formatTime(time) {
+                return (time < 10 ? "0" : "") + time;
+            }
+        }
+
+        function addRow() {
+            var table = document.getElementById('editableTable');
+            var newRow = table.insertRow();
+
+            for (var i = 0; i < 4; i++) {
+                var cell = newRow.insertCell(i);
+                cell.contentEditable = true;
+                cell.textContent = '';
+            }
+        }
+
+        function removeRow() {
+            var table = document.getElementById('editableTable');
+            var rowCount = table.rows.length;
+            if (rowCount > 2) { // Ensure there are always at least 2 rows
+                table.deleteRow(rowCount - 1);
+            }
+        }
+
+        function generateSchedule() {
+            var table = document.getElementById('editableTable');
+            var values = [];
+            var totalTimePerCycle = parseInt(document.getElementById("work").value) + parseInt(document.getElementById("break").value);
+
+            for (var i = 0; i < table.rows.length; i++) {
+                var row = table.rows[i];
+                var subject = row.cells[0].innerText.trim();
+                var urgency = parseInt(row.cells[1].innerText);
+                var workload = parseInt(row.cells[2].innerText);
+                var enjoyment = parseInt(row.cells[3].innerText);
+                if (!isNaN(urgency) && !isNaN(workload) && !isNaN(enjoyment)) {
+                    var timeNeeded = workload * 8; // Assuming 1 point of workload is 10 minutes
+                    values.push({
+                        subject: subject,
+                        timeNeeded: timeNeeded
+                    });
+                }
+            }
+
+            // Sort subjects based on time needed
+            values.sort(function(a, b) {
+                return b.timeNeeded - a.timeNeeded;
+            });
+
+            // Generate schedule
+            var scheduleTable = document.getElementById('scheduleTable').getElementsByTagName('tbody')[0];
+            scheduleTable.innerHTML = ''; // Clear existing schedule
+
+            for (var j = 0; j < values.length; j++) {
+                var subject = values[j].subject;
+                var timeNeeded = values[j].timeNeeded;
+
+                var newRow = scheduleTable.insertRow();
+                var subjectCell = newRow.insertCell(0);
+                var timeNeededCell = newRow.insertCell(1);
+
+                subjectCell.innerHTML = subject;
+                timeNeededCell.innerHTML = timeNeeded + " minutes";
+            }
+        }
+    </script>
+</body>
+
+</html>
