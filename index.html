@@ -31,7 +31,7 @@
             <thead>
                 <tr>
                     <th>Subject (in order of priority)</th>
-                    <th>Time Needed (minutes)</th>
+                    <th>Time Needed</th>
                 </tr>
             </thead>
             <tbody>
@@ -71,6 +71,9 @@
         <button onclick="addRow()">Add Column</button>
         <button onclick="removeRow()">Remove Column</button>
         <button onclick="generateSchedule()">Generate a schedule</button>
+        <br>
+        <p>Rate the subjects you need to do on a scale from 1-10 in regards to Urgency, Workload and how much you enjoy it, then click the "Generate a Schedule" button to create a schedule in order of what subject you should work on first. The time needed
+            is calculated by assuming one point in the workload value is the equivalent of 8 minutes of work to complete (I know it's scuffed but I'll fix it when I come up with a better alternative)</p>
     </div>
 
     <script>
