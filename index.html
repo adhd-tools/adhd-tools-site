@@ -230,6 +230,20 @@
             }
         }
 
+        function addTaskEventListeners(taskElement) {
+            // Add event listener to toggle strikethrough on single click
+            taskElement.addEventListener("click", function() {
+                this.classList.toggle("strikethrough");
+                updateToDoList();
+            });
+
+            // Add event listener to remove task on double click
+            taskElement.addEventListener("dblclick", function() {
+                this.remove();
+                updateToDoList();
+            });
+        }
+
         function addTask() {
             var taskInput = document.getElementById("newTaskInput");
             var taskText = taskInput.value.trim();
@@ -238,18 +252,9 @@
                 var toDoList = document.getElementById("toDoList");
                 var newTaskItem = document.createElement("li");
                 newTaskItem.textContent = taskText;
-                
-                // Add event listener to toggle strikethrough on single click
-                newTaskItem.addEventListener("click", function() {
-                    this.classList.toggle("strikethrough");
-                    updateToDoList();
-                });
 
-                // Add event listener to remove task on double click
-                newTaskItem.addEventListener("dblclick", function() {
-                    this.remove();
-                    updateToDoList();
-                });
+                // Add event listeners to the new task
+                addTaskEventListeners(newTaskItem);
 
                 toDoList.appendChild(newTaskItem);
                 taskInput.value = "";
@@ -273,21 +278,9 @@
             }
 
             // Add event listeners to existing tasks loaded from localStorage
-            var tasks = toDoList.getElementsByTagName("li");
-            for (var i = 0; i < tasks.length; i++) {
-                tasks[i].addEventListener("click", function() {
-                    this.classList.toggle("strikethrough");
-                    updateToDoList();
-                });
-                tasks[i].addEventListener("dblclick", function() {
-                    this.remove();
-                    updateToDoList();
-                });
-            }
-        };
+            addEventListenersToTasks();
 
-        // Retrieve and set stored values for work and break durations
-        window.onload = function() {
+            // Retrieve and set stored values for work and break durations
             var storedWork = localStorage.getItem('workDuration');
             var storedBreak = localStorage.getItem('breakDuration');
             if (storedWork !== null) {
@@ -309,13 +302,6 @@
             var storedScheduleTable = localStorage.getItem('scheduleTable');
             if (storedScheduleTable !== null) {
                 scheduleTable.innerHTML = storedScheduleTable;
-            }
-
-            // Retrieve and set stored values for items in toDoChecklist
-            var toDoList = document.getElementById("toDoList");
-            var storedToDoList = localStorage.getItem('toDoList');
-            if (storedToDoList !== null) {
-                toDoList.innerHTML = storedToDoList;
             }
         };
 
@@ -340,11 +326,6 @@
             localStorage.setItem('scheduleTable', storedScheduleTable);
         });
 
-        // Store items in toDoChecklist
-        document.getElementById('toDoList').addEventListener('change', function() {
-            var storedToDoList = document.getElementById("toDoList").innerHTML;
-            localStorage.setItem('toDoList', storedToDoList);
-        });
     </script>
 </body>
 
