@@ -79,3 +79,11 @@ th {
     position: absolute;
     right: 5%;
 }
+
+.strikethrough {
+    text-decoration: line-through;
+}
+
+.indented {
+    margin-left: 20px;
+}
