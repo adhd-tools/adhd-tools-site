@@ -1,9 +1,9 @@
 body {
-    background-color: powderblue;
+    background-color: rgb(210, 233, 236);
 }
 
 .timerInput {
-    background-color: aqua;
+    background-color: rgb(0, 183, 255);
     position: relative;
 }
 
@@ -15,26 +15,33 @@ div,
 label {
     display: inline-block;
     vertical-align: top;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.timerLabel {
+    font-size: 17px;
 }
 
 .timer {
-    height: 210px;
-    width: 12%;
+    height: 250px;
+    width: 15%;
     text-align: center;
     margin-left: 2%;
     margin-top: 2%;
-    border: 3px solid black;
+    border: 5px solid rgb(26, 76, 168);
     border-radius: 25px;
     background-color: cornflowerblue;
 }
 
 #countdown {
     font-size: 40px;
+    color: white;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
-table {
+#editableTable {
     border-collapse: collapse;
-    width: 100%;
+    width: 35%;
 }
 
 th,
@@ -42,13 +49,33 @@ td {
     border: 1px solid black;
     padding: 8px;
     text-align: left;
+    background-color: rgba(126, 205, 255, 0.935);
 }
 
 th {
     background-color: #f2f2f2;
 }
 
-.scheduleTable {
-    margin-top: 2.2%;
-    margin-left: 10%;
+#scheduleTable {
+    margin-top: 10%;
+    margin-left: 50%;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#timerStart {
+    font-size: 20px;
+    border-radius: 10px;
+    border: 3px solid blue;
+    background-color: dodgerblue;
+}
+
+#work,
+#break {
+    text-align: center;
+}
+
+.toDoChecklist {
+    position: absolute;
+    right: 5%;
 }
