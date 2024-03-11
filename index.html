@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="styles.css">
     <title>ADHD Tools</title>
 </head>
 
@@ -250,6 +250,27 @@
             if (storedBreak !== null) {
                 document.getElementById("break").value = storedBreak;
             }
+
+            // Retrieve and set stored values for items in editableTable
+            var editableTable = document.getElementById("editableTable").getElementsByTagName('tbody')[0];
+            var storedEditableTable = localStorage.getItem('editableTable');
+            if (storedEditableTable !== null) {
+                editableTable.innerHTML = storedEditableTable;
+            }
+
+            // Retrieve and set stored values for items in scheduleTable
+            var scheduleTable = document.getElementById("scheduleTable").getElementsByTagName('tbody')[0];
+            var storedScheduleTable = localStorage.getItem('scheduleTable');
+            if (storedScheduleTable !== null) {
+                scheduleTable.innerHTML = storedScheduleTable;
+            }
+
+            // Retrieve and set stored values for items in toDoChecklist
+            var toDoList = document.getElementById("toDoList");
+            var storedToDoList = localStorage.getItem('toDoList');
+            if (storedToDoList !== null) {
+                toDoList.innerHTML = storedToDoList;
+            }
         };
 
         // Store work and break durations when changed
@@ -259,6 +280,24 @@
 
         document.getElementById('break').addEventListener('input', function() {
             localStorage.setItem('breakDuration', this.value);
+        });
+
+        // Store items in editableTable
+        document.getElementById('editableTable').addEventListener('input', function() {
+            var storedEditableTable = document.getElementById("editableTable").getElementsByTagName('tbody')[0].innerHTML;
+            localStorage.setItem('editableTable', storedEditableTable);
+        });
+
+        // Store items in scheduleTable
+        document.getElementById('scheduleTable').addEventListener('input', function() {
+            var storedScheduleTable = document.getElementById("scheduleTable").getElementsByTagName('tbody')[0].innerHTML;
+            localStorage.setItem('scheduleTable', storedScheduleTable);
+        });
+
+        // Store items in toDoChecklist
+        document.getElementById('toDoList').addEventListener('input', function() {
+            var storedToDoList = document.getElementById("toDoList").innerHTML;
+            localStorage.setItem('toDoList', storedToDoList);
         });
     </script>
 </body>
