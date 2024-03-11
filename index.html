@@ -326,6 +326,13 @@
             localStorage.setItem('scheduleTable', storedScheduleTable);
         });
 
+        // Add event listeners to existing tasks loaded from localStorage
+        function addEventListenersToTasks() {
+            var tasks = document.getElementById("toDoList").getElementsByTagName("li");
+            for (var i = 0; i < tasks.length; i++) {
+                addTaskEventListeners(tasks[i]);
+            }
+        }
     </script>
 </body>
 
