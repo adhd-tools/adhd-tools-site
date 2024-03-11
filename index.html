@@ -294,10 +294,23 @@
             localStorage.setItem('scheduleTable', storedScheduleTable);
         });
 
-        // Store items in toDoChecklist
-        document.getElementById('toDoList').addEventListener('change', function() {
-            var storedToDoList = document.getElementById("toDoList").innerHTML;
+        function updateToDoList() {
+            var toDoList = document.getElementById("toDoList");
+            var storedToDoList = toDoList.innerHTML;
             localStorage.setItem('toDoList', storedToDoList);
+        }
+    
+        // Add an event listener to update the to-do list when a task is added or removed
+        document.getElementById("newTaskInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                addTask();
+                updateToDoList();
+            }
+        });
+    
+        // Listen for clicks on the to-do list items to update storage when items are marked as done or removed
+        document.getElementById("toDoList").addEventListener("click", function() {
+            updateToDoList();
         });
     </script>
 </body>
