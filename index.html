@@ -170,7 +170,7 @@
             var values = [];
             var totalTimePerCycle = parseInt(document.getElementById("work").value) + parseInt(document.getElementById("break").value);
 
-            for (var i = 0; i < table.rows.length; i++) {
+            for (var i = 1; i < table.rows.length; i++) {
                 var row = table.rows[i];
                 var subject = row.cells[0].innerText.trim();
                 var urgency = row.cells[1].innerText;
