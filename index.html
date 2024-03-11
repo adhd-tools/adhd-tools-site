@@ -25,8 +25,8 @@
                     <th>Subject</th>
                     <th>Due Date (dd/mm/yyyy)</th>
                     <!-- come up with a better method than this for workload. maybe how long it'd take to do? -->
-                    <th>Workload</th>
-                    <th>Enjoyment</th>
+                    <th>Workload (1-10)</th>
+                    <th>Enjoyment (1-10)</th>
                 </tr>
             </thead>
             <tbody>
@@ -82,6 +82,10 @@
                 <!-- Table rows for generated schedule will go here -->
             </tbody>
         </table>
+        <p>Just quickly this is NOT a recommended study order for you to follow <br> to the letter or something (I'm working on something like that though to replace this).<br> This is just what the priorities are for what you should work on with a <br>random
+            equation I made using the data in the other table. <br>Breaking up your learning into chunks and switching between subjects every <br>once in a while is much better for studying (also the Time Needed <br>estimate sucks lmao don't take it seriously
+            I'll fix it eventually though).
+        </p>
     </div>
 
 
@@ -217,7 +221,11 @@
 
         function handleKeyPress(event) {
             if (event.key === "Enter") {
-                addTask();
+                if (event.target.closest('#editableTable')) {
+                    addRow();
+                } else {
+                    addTask();
+                }
             }
         }
 
