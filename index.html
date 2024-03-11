@@ -6,14 +6,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
     <title>ADHD Tools</title>
+    <style>
+        .strikethrough {
+            text-decoration: line-through;
+        }
+        
+        .indented {
+            margin-left: 20px;
+        }
+    </style>
 </head>
 
 <body>
     <div class="timer">
         <br>
+        <div id="countdown">--:--</div>
+        <br>
         <button id="timerStart" onclick="startOrRestartPomodoro()">Start Timer</button>
         <br>
-        <div id="countdown">--:--</div>
         <br>
         <label for="work" class="timerLabel">Duration of Work (minutes):</label><br>
         <div>
@@ -40,6 +50,14 @@
         </table>
     </div>
 
+    <div class="toDoChecklist">
+        <h2>To-Do Checklist</h2>
+        <input type="text" id="newTaskInput" placeholder="Add a new task..." onkeypress="handleKeyPress(event)">
+        <ul id="toDoList">
+            <!-- To-Do items will be added here dynamically -->
+        </ul>
+    </div>
+
     <br><br><br><br>
 
     <div>
@@ -47,7 +65,8 @@
             <thead>
                 <tr>
                     <th>Subject</th>
-                    <th>Urgency</th>
+                    <th>Due Date (dd/mm/yyyy)</th>
+                    <!-- come up with a better method than this for workload. maybe how long it'd take to do? -->
                     <th>Workload</th>
                     <th>Enjoyment</th>
                 </tr>
@@ -72,8 +91,8 @@
         <button onclick="removeRow()">Remove Column</button>
         <button onclick="generateSchedule()">Generate a schedule</button>
         <br>
-        <p>Rate the subjects you need to do on a scale from 1-10 in regards to Urgency, Workload and how much you enjoy it, then click the "Generate a Schedule" button to create a schedule in order of what subject you should work on first. The time needed
-            is calculated by assuming one point in the workload value is the equivalent of 8 minutes of work to complete (I know it's scuffed but I'll fix it when I come up with a better alternative)</p>
+        <p style="margin-right: 40%;">Rate the subjects you need to do on a scale from 1-10 in regards to Urgency, Workload and how much you enjoy it, then click the "Generate a Schedule" button to create a schedule in order of what subject you should work on first. The time needed
+            is calculated by assuming one point in the workload value is the equivalent of 8 minutes of work to complete.</p>
     </div>
 
     <script>
@@ -150,26 +169,47 @@
             for (var i = 0; i < table.rows.length; i++) {
                 var row = table.rows[i];
                 var subject = row.cells[0].innerText.trim();
-                var urgency = parseInt(row.cells[1].innerText);
+                var urgency = row.cells[1].innerText;
+                var initial = urgency.split(/\//);
+                var urgency = ([initial[1], initial[0], initial[2]].join('/'));
                 var workload = parseInt(row.cells[2].innerText);
                 var enjoyment = parseInt(row.cells[3].innerText);
-                if (!isNaN(urgency) && !isNaN(workload) && !isNaN(enjoyment)) {
-                    var timeNeeded = workload * 8; // Assuming 1 point of workload is 10 minutes
+
+                console.log(urgency);
+                const assignmentDate = new Date(urgency);
+                const currentDate = new Date();
+                console.log(assignmentDate);
+                console.log(currentDate);
+                const diffTime = Math.abs(currentDate - assignmentDate);
+                const days_raw = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                console.log(days_raw + " days");
+
+                if (days_raw > 30) {
+                    var days = 30;
+                } else if (days_raw <= 30) {
+                    var days = Math.ceil(days_raw);
+                    days = 30 - days;
+                }
+
+                var scale = (1 + (days / 25)) * (workload + enjoyment * 0.4);
+                console.log(scale);
+
+                if (!isNaN(workload) && !isNaN(enjoyment)) {
+                    var timeNeeded = workload * 8;
                     values.push({
                         subject: subject,
+                        scale: scale,
                         timeNeeded: timeNeeded
                     });
                 }
             }
 
-            // Sort subjects based on time needed
             values.sort(function(a, b) {
-                return b.timeNeeded - a.timeNeeded;
+                return b.scale - a.scale;
             });
 
-            // Generate schedule
             var scheduleTable = document.getElementById('scheduleTable').getElementsByTagName('tbody')[0];
-            scheduleTable.innerHTML = ''; // Clear existing schedule
+            scheduleTable.innerHTML = '';
 
             for (var j = 0; j < values.length; j++) {
                 var subject = values[j].subject;
@@ -183,6 +223,52 @@
                 timeNeededCell.innerHTML = timeNeeded + " minutes";
             }
         }
+
+        function handleKeyPress(event) {
+            if (event.key === "Enter") {
+                addTask();
+            }
+        }
+
+        function addTask() {
+            var taskInput = document.getElementById("newTaskInput");
+            var taskText = taskInput.value.trim();
+
+            if (taskText !== "") {
+                var toDoList = document.getElementById("toDoList");
+                var newTaskItem = document.createElement("li");
+                newTaskItem.textContent = taskText;
+                newTaskItem.onclick = function() {
+                    this.classList.toggle("strikethrough");
+                };
+                newTaskItem.ondblclick = function() {
+                    this.remove();
+                };
+                toDoList.appendChild(newTaskItem);
+                taskInput.value = "";
+            }
+        }
+
+        // Retrieve and set stored values for work and break durations
+        window.onload = function() {
+            var storedWork = localStorage.getItem('workDuration');
+            var storedBreak = localStorage.getItem('breakDuration');
+            if (storedWork !== null) {
+                document.getElementById("work").value = storedWork;
+            }
+            if (storedBreak !== null) {
+                document.getElementById("break").value = storedBreak;
+            }
+        };
+
+        // Store work and break durations when changed
+        document.getElementById('work').addEventListener('input', function() {
+            localStorage.setItem('workDuration', this.value);
+        });
+
+        document.getElementById('break').addEventListener('input', function() {
+            localStorage.setItem('breakDuration', this.value);
+        });
     </script>
 </body>
 
