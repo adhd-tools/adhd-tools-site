@@ -6,6 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
     <title>ADHD Tools</title>
+    <style>
+        .strikethrough {
+            text-decoration: line-through;
+        }
+        
+        .indented {
+            margin-left: 20px;
+        }
+    </style>
 </head>
 
 <body>
@@ -44,9 +53,9 @@
     <div class="toDoChecklist">
         <h2>To-Do Checklist</h2>
         <input type="text" id="newTaskInput" placeholder="Add a new task..." onkeypress="handleKeyPress(event)">
-        <div id="toDoList">
+        <ul id="toDoList">
             <!-- To-Do items will be added here dynamically -->
-        </div>
+        </ul>
     </div>
 
     <br><br><br><br>
@@ -227,38 +236,78 @@
 
             if (taskText !== "") {
                 var toDoList = document.getElementById("toDoList");
-                var newTaskItem = document.createElement("div");
-                newTaskItem.className = "toDoItem";
-                newTaskItem.innerHTML = `
-                    <select>
-                        <option value="">No parent</option>
-                        ${toDoList.innerHTML}
-                    </select>
-                    <input type="text" value="${taskText}">
-                    <button onclick="convertToDropdown(this)">Convert</button>`;
+                var newTaskItem = document.createElement("li");
+                newTaskItem.textContent = taskText;
+                newTaskItem.onclick = function() {
+                    this.classList.toggle("strikethrough");
+                };
+                newTaskItem.ondblclick = function() {
+                    this.remove();
+                };
                 toDoList.appendChild(newTaskItem);
                 taskInput.value = "";
             }
         }
 
-        function convertToDropdown(button) {
-            var itemDiv = button.parentNode;
-            var taskText = itemDiv.querySelector("input").value;
-            var parentSelect = itemDiv.querySelector("select");
-
-            if (taskText !== "") {
-                var newTaskOption = document.createElement("option");
-                newTaskOption.textContent = taskText;
-                parentSelect.appendChild(newTaskOption);
-
-                var newTaskInput = document.createElement("input");
-                newTaskInput.type = "text";
-                newTaskInput.value = taskText;
-                itemDiv.replaceChild(newTaskInput, itemDiv.querySelector("input"));
-
-                button.remove();
+        // Retrieve and set stored values for work and break durations
+        window.onload = function() {
+            var storedWork = localStorage.getItem('workDuration');
+            var storedBreak = localStorage.getItem('breakDuration');
+            if (storedWork !== null) {
+                document.getElementById("work").value = storedWork;
             }
-        }
+            if (storedBreak !== null) {
+                document.getElementById("break").value = storedBreak;
+            }
+
+            // Retrieve and set stored values for items in editableTable
+            var editableTable = document.getElementById("editableTable").getElementsByTagName('tbody')[0];
+            var storedEditableTable = localStorage.getItem('editableTable');
+            if (storedEditableTable !== null) {
+                editableTable.innerHTML = storedEditableTable;
+            }
+
+            // Retrieve and set stored values for items in scheduleTable
+            var scheduleTable = document.getElementById("scheduleTable").getElementsByTagName('tbody')[0];
+            var storedScheduleTable = localStorage.getItem('scheduleTable');
+            if (storedScheduleTable !== null) {
+                scheduleTable.innerHTML = storedScheduleTable;
+            }
+
+            // Retrieve and set stored values for items in toDoChecklist
+            var toDoList = document.getElementById("toDoList");
+            var storedToDoList = localStorage.getItem('toDoList');
+            if (storedToDoList !== null) {
+                toDoList.innerHTML = storedToDoList;
+            }
+        };
+
+        // Store work and break durations when changed
+        document.getElementById('work').addEventListener('input', function() {
+            localStorage.setItem('workDuration', this.value);
+        });
+
+        document.getElementById('break').addEventListener('input', function() {
+            localStorage.setItem('breakDuration', this.value);
+        });
+
+        // Store items in editableTable
+        document.getElementById('editableTable').addEventListener('input', function() {
+            var storedEditableTable = document.getElementById("editableTable").getElementsByTagName('tbody')[0].innerHTML;
+            localStorage.setItem('editableTable', storedEditableTable);
+        });
+
+        // Store items in scheduleTable
+        document.getElementById('scheduleTable').addEventListener('input', function() {
+            var storedScheduleTable = document.getElementById("scheduleTable").getElementsByTagName('tbody')[0].innerHTML;
+            localStorage.setItem('scheduleTable', storedScheduleTable);
+        });
+
+        // Store items in toDoChecklist
+        document.getElementById('toDoList').addEventListener('input', function() {
+            var storedToDoList = document.getElementById("toDoList").innerHTML;
+            localStorage.setItem('toDoList', storedToDoList);
+        });
     </script>
 </body>
 
