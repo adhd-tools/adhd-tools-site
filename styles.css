@@ -87,3 +87,7 @@ th {
 .indented {
     margin-left: 20px;
 }
+
+.toDoItem {
+    margin-bottom: 10px;
+}
