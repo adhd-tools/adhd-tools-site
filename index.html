@@ -4,33 +4,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="stylesBackup.css">
     <title>ADHD Tools</title>
-    <style>
-        .strikethrough {
-            text-decoration: line-through;
-        }
-        
-        .indented {
-            margin-left: 20px;
-        }
-        
-        #toDoTable {
-            border-collapse: collapse;
-        }
-        
-        #toDoTable td {
-            padding: 8px;
-            border: none;
-        }
-        
-        #toDoTable tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-    </style>
 </head>
 
 <body>
+    <div class="editableTable">
+        <table id="editableTable">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Due Date (dd/mm/yyyy)</th>
+                    <!-- come up with a better method than this for workload. maybe how long it'd take to do? -->
+                    <th>Workload</th>
+                    <th>Enjoyment</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                </tr>
+                <tr>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                </tr>
+            </tbody>
+        </table>
+        <br>
+        <button onclick="addRow()">Add Column</button>
+        <button onclick="removeRow()">Remove Column</button>
+        <button onclick="generateSchedule()">Generate a schedule</button>
+        <br>
+    </div>
+
+
     <div class="timer">
         <br>
         <div id="countdown">--:--</div>
@@ -64,55 +76,21 @@
     </div>
 
     <div class="toDoChecklist">
-        <h2>To-Do Checklist</h2>
-        <input type="text" id="newTaskInput" placeholder="Add a new task..." onkeypress="handleKeyPress(event)">
+        <h2>Checklist</h2>
+        <p>Click to strikethrough, double click to remove.</p>
+        <input type="text" id="newTaskInput" placeholder="Press enter when done..." onkeypress="handleKeyPress(event)"><br><br>
         <table id="toDoTable">
             <!-- To-Do items will be added here dynamically -->
         </table>
     </div>
 
-    <br><br><br><br>
-
-    <div>
-        <table id="editableTable">
-            <thead>
-                <tr>
-                    <th>Subject</th>
-                    <th>Due Date (dd/mm/yyyy)</th>
-                    <!-- come up with a better method than this for workload. maybe how long it'd take to do? -->
-                    <th>Workload</th>
-                    <th>Enjoyment</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                </tr>
-                <tr>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                </tr>
-            </tbody>
-        </table>
-        <br>
-        <button onclick="addRow()">Add Column</button>
-        <button onclick="removeRow()">Remove Column</button>
-        <button onclick="generateSchedule()">Generate a schedule</button>
-        <br>
-        <p style="margin-right: 40%;">Rate the subjects you need to do on a scale from 1-10 in regards to Urgency, Workload and how much you enjoy it, then click the "Generate a Schedule" button to create a schedule in order of what subject you should work on first. The time needed
-            is calculated by assuming one point in the workload value is the equivalent of 8 minutes of work to complete.</p>
-    </div>
 
     <script>
         var timerRunning = false;
         var countdownInterval;
 
         function startOrRestartPomodoro() {
+            console.log("Button Pressed");
             if (timerRunning) {
                 clearInterval(countdownInterval);
                 timerRunning = false;
@@ -248,6 +226,7 @@
             taskElement.addEventListener("click", function() {
                 this.classList.toggle("strikethrough");
                 updateToDoList();
+                getTaskFraction();
             });
 
             // Add event listener to remove task on double click
@@ -275,6 +254,7 @@
                 updateToDoList();
             }
         }
+
 
         // Store items in toDoChecklist
         function updateToDoList() {
