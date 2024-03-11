@@ -6,15 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
     <title>ADHD Tools</title>
-    <style>
-        .strikethrough {
-            text-decoration: line-through;
-        }
-        
-        .indented {
-            margin-left: 20px;
-        }
-    </style>
 </head>
 
 <body>
@@ -304,7 +295,7 @@
         });
 
         // Store items in toDoChecklist
-        document.getElementById('toDoList').addEventListener('input', function() {
+        document.getElementById('toDoList').addEventListener('change', function() {
             var storedToDoList = document.getElementById("toDoList").innerHTML;
             localStorage.setItem('toDoList', storedToDoList);
         });
