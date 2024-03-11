@@ -4,11 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="styles.css">
     <title>ADHD Tools</title>
 </head>
 
 <body>
+    <div class="toDoChecklist">
+        <h2>Checklist</h2>
+        <p>Click to strikethrough, double click to remove.</p>
+        <input type="text" id="newTaskInput" placeholder="Press enter when done..." onkeypress="handleKeyPress(event)"><br><br>
+        <table id="toDoTable">
+            <!-- To-Do items will be added here dynamically -->
+        </table>
+    </div>
+
     <div class="editableTable">
         <table id="editableTable">
             <thead>
@@ -72,15 +81,6 @@
             <tbody>
                 <!-- Table rows for generated schedule will go here -->
             </tbody>
-        </table>
-    </div>
-
-    <div class="toDoChecklist">
-        <h2>Checklist</h2>
-        <p>Click to strikethrough, double click to remove.</p>
-        <input type="text" id="newTaskInput" placeholder="Press enter when done..." onkeypress="handleKeyPress(event)"><br><br>
-        <table id="toDoTable">
-            <!-- To-Do items will be added here dynamically -->
         </table>
     </div>
 
