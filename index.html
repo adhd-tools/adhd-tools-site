@@ -14,6 +14,19 @@
         .indented {
             margin-left: 20px;
         }
+        
+        #toDoTable {
+            border-collapse: collapse;
+        }
+        
+        #toDoTable td {
+            padding: 8px;
+            border: none;
+        }
+        
+        #toDoTable tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
     </style>
 </head>
 
@@ -53,9 +66,9 @@
     <div class="toDoChecklist">
         <h2>To-Do Checklist</h2>
         <input type="text" id="newTaskInput" placeholder="Add a new task..." onkeypress="handleKeyPress(event)">
-        <ul id="toDoList">
+        <table id="toDoTable">
             <!-- To-Do items will be added here dynamically -->
-        </ul>
+        </table>
     </div>
 
     <br><br><br><br>
@@ -249,14 +262,15 @@
             var taskText = taskInput.value.trim();
 
             if (taskText !== "") {
-                var toDoList = document.getElementById("toDoList");
-                var newTaskItem = document.createElement("li");
-                newTaskItem.textContent = taskText;
+                var toDoTable = document.getElementById("toDoTable");
+                var newRow = toDoTable.insertRow();
+
+                var cell = newRow.insertCell(0);
+                cell.textContent = taskText;
 
                 // Add event listeners to the new task
-                addTaskEventListeners(newTaskItem);
+                addTaskEventListeners(newRow);
 
-                toDoList.appendChild(newTaskItem);
                 taskInput.value = "";
                 updateToDoList();
             }
@@ -264,17 +278,17 @@
 
         // Store items in toDoChecklist
         function updateToDoList() {
-            var toDoList = document.getElementById("toDoList");
-            var storedToDoList = toDoList.innerHTML;
+            var toDoTable = document.getElementById("toDoTable");
+            var storedToDoList = toDoTable.innerHTML;
             localStorage.setItem('toDoList', storedToDoList);
         }
 
         // Load tasks from localStorage on page load
         window.onload = function() {
-            var toDoList = document.getElementById("toDoList");
+            var toDoTable = document.getElementById("toDoTable");
             var storedToDoList = localStorage.getItem('toDoList');
             if (storedToDoList !== null) {
-                toDoList.innerHTML = storedToDoList;
+                toDoTable.innerHTML = storedToDoList;
             }
 
             // Add event listeners to existing tasks loaded from localStorage
@@ -328,7 +342,7 @@
 
         // Add event listeners to existing tasks loaded from localStorage
         function addEventListenersToTasks() {
-            var tasks = document.getElementById("toDoList").getElementsByTagName("li");
+            var tasks = document.getElementById("toDoTable").getElementsByTagName("tr");
             for (var i = 0; i < tasks.length; i++) {
                 addTaskEventListeners(tasks[i]);
             }
