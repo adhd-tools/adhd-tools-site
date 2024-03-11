@@ -6,6 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
     <title>ADHD Tools</title>
+    <style>
+        .strikethrough {
+            text-decoration: line-through;
+        }
+        
+        .indented {
+            margin-left: 20px;
+        }
+    </style>
 </head>
 
 <body>
@@ -224,25 +233,24 @@
         function addTask() {
             var taskInput = document.getElementById("newTaskInput");
             var taskText = taskInput.value.trim();
-    
+
             if (taskText !== "") {
                 var toDoList = document.getElementById("toDoList");
                 var newTaskItem = document.createElement("li");
                 newTaskItem.textContent = taskText;
-                newTaskItem.classList.add("task-item"); // Add a class for easier event targeting
                 
                 // Add event listener to toggle strikethrough on single click
                 newTaskItem.addEventListener("click", function() {
                     this.classList.toggle("strikethrough");
                     updateToDoList();
                 });
-    
+
                 // Add event listener to remove task on double click
                 newTaskItem.addEventListener("dblclick", function() {
                     this.remove();
                     updateToDoList();
                 });
-    
+
                 toDoList.appendChild(newTaskItem);
                 taskInput.value = "";
                 updateToDoList();
@@ -309,22 +317,7 @@
             if (storedToDoList !== null) {
                 toDoList.innerHTML = storedToDoList;
             }
-    
-            // Add event listeners to existing tasks loaded from localStorage
-            var tasks = document.querySelectorAll(".task-item");
-            tasks.forEach(function(task) {
-                // Add event listener to toggle strikethrough on single click
-                task.addEventListener("click", function() {
-                    this.classList.toggle("strikethrough");
-                    updateToDoList();
-                });
-    
-                // Add event listener to remove task on double click
-                task.addEventListener("dblclick", function() {
-                    this.remove();
-                    updateToDoList();
-                });
-            });
+        };
 
         // Store work and break durations when changed
         document.getElementById('work').addEventListener('input', function() {
