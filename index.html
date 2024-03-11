@@ -6,6 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
     <title>ADHD Tools</title>
+    <style>
+        .strikethrough {
+            text-decoration: line-through;
+        }
+        
+        .indented {
+            margin-left: 20px;
+        }
+    </style>
 </head>
 
 <body>
@@ -229,16 +238,53 @@
                 var toDoList = document.getElementById("toDoList");
                 var newTaskItem = document.createElement("li");
                 newTaskItem.textContent = taskText;
-                newTaskItem.onclick = function() {
+                
+                // Add event listener to toggle strikethrough on single click
+                newTaskItem.addEventListener("click", function() {
                     this.classList.toggle("strikethrough");
-                };
-                newTaskItem.ondblclick = function() {
+                    updateToDoList();
+                });
+
+                // Add event listener to remove task on double click
+                newTaskItem.addEventListener("dblclick", function() {
                     this.remove();
-                };
+                    updateToDoList();
+                });
+
                 toDoList.appendChild(newTaskItem);
                 taskInput.value = "";
+                updateToDoList();
             }
         }
+
+        // Store items in toDoChecklist
+        function updateToDoList() {
+            var toDoList = document.getElementById("toDoList");
+            var storedToDoList = toDoList.innerHTML;
+            localStorage.setItem('toDoList', storedToDoList);
+        }
+
+        // Load tasks from localStorage on page load
+        window.onload = function() {
+            var toDoList = document.getElementById("toDoList");
+            var storedToDoList = localStorage.getItem('toDoList');
+            if (storedToDoList !== null) {
+                toDoList.innerHTML = storedToDoList;
+            }
+
+            // Add event listeners to existing tasks loaded from localStorage
+            var tasks = toDoList.getElementsByTagName("li");
+            for (var i = 0; i < tasks.length; i++) {
+                tasks[i].addEventListener("click", function() {
+                    this.classList.toggle("strikethrough");
+                    updateToDoList();
+                });
+                tasks[i].addEventListener("dblclick", function() {
+                    this.remove();
+                    updateToDoList();
+                });
+            }
+        };
 
         // Retrieve and set stored values for work and break durations
         window.onload = function() {
@@ -294,23 +340,10 @@
             localStorage.setItem('scheduleTable', storedScheduleTable);
         });
 
-        function updateToDoList() {
-            var toDoList = document.getElementById("toDoList");
-            var storedToDoList = toDoList.innerHTML;
+        // Store items in toDoChecklist
+        document.getElementById('toDoList').addEventListener('change', function() {
+            var storedToDoList = document.getElementById("toDoList").innerHTML;
             localStorage.setItem('toDoList', storedToDoList);
-        }
-    
-        // Add an event listener to update the to-do list when a task is added or removed
-        document.getElementById("newTaskInput").addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                addTask();
-                updateToDoList();
-            }
-        });
-    
-        // Listen for clicks on the to-do list items to update storage when items are marked as done or removed
-        document.getElementById("toDoList").addEventListener("click", function() {
-            updateToDoList();
         });
     </script>
 </body>
