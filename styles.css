@@ -23,14 +23,16 @@ label {
 }
 
 .timer {
+    float: right;
     height: 250px;
     width: 15%;
     text-align: center;
-    margin-left: 2%;
-    margin-top: 2%;
+    margin-right: 2%;
+    margin-top: 1%;
     border: 5px solid rgb(26, 76, 168);
     border-radius: 25px;
     background-color: cornflowerblue;
+    clear: both;
 }
 
 #countdown {
@@ -41,7 +43,14 @@ label {
 
 #editableTable {
     border-collapse: collapse;
-    width: 35%;
+    width: 100%;
+}
+
+.editableTable {
+    margin-left: 25%;
+    margin-top: 1.5%;
+    position: fixed;
+    clear: both;
 }
 
 th,
@@ -56,9 +65,15 @@ th {
     background-color: #f2f2f2;
 }
 
+.scheduleTable {
+    margin-top: 3%;
+    margin-right: 2%;
+    float: right;
+    position: relative;
+    clear: both;
+}
+
 #scheduleTable {
-    margin-top: 10%;
-    margin-left: 50%;
     border-collapse: collapse;
     width: 100%;
 }
@@ -77,7 +92,12 @@ th {
 
 .toDoChecklist {
     position: absolute;
-    right: 5%;
+    margin-left: 0.75%;
+    margin-top: 0.5%;
+}
+
+.indented {
+    margin-left: 20px;
 }
 
 .strikethrough {
@@ -88,6 +108,15 @@ th {
     margin-left: 20px;
 }
 
-.toDoItem {
-    margin-bottom: 10px;
+#toDoTable {
+    border-collapse: collapse;
+}
+
+#toDoTable td {
+    padding: 8px;
+    border: none;
+}
+
+#toDoTable tr:nth-child(even) {
+    background-color: #f2f2f2;
 }
