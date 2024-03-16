@@ -2,29 +2,22 @@
 <html lang="en">
 
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8H8GFPPQ3K"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-    
-      gtag('config', 'G-8H8GFPPQ3K');
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
     <title>ADHD Tools</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <div class="toDoChecklist">
-        <h2>Checklist</h2>
-        <p>Click to strikethrough, double click to remove.</p>
-        <input type="text" id="newTaskInput" placeholder="Press enter when done..." onkeypress="handleKeyPress(event)"><br><br>
-        <table id="toDoTable">
-            <!-- To-Do items will be added here dynamically -->
-        </table>
+    <div>
+        <h2>To-Do List:</h2>
+        <p>Enter - Add new Row<br>Backspace - Remove empty row<br>This will save just like everything else on the page.</p>
+        <div class="toDoChecklist" id="toDoList">
+            <!-- Rows for generated to do list go here -->
+        </div>
     </div>
 
     <div class="editableTable">
@@ -34,7 +27,7 @@
                     <th>Subject</th>
                     <th>Due Date (dd/mm/yyyy)</th>
                     <!-- come up with a better method than this for workload. maybe how long it'd take to do? -->
-                    <th>Workload (1-10)</th>
+                    <th>Time to Complete (hours)</th>
                     <th>Enjoyment (1-10)</th>
                 </tr>
             </thead>
@@ -54,8 +47,8 @@
             </tbody>
         </table>
         <br>
-        <button onclick="addRow()">Add Column</button>
-        <button onclick="removeRow()">Remove Column</button>
+        <button onclick="addRow()">Add Row</button>
+        <button onclick="removeRow()">Remove Row</button>
         <button onclick="generateSchedule()">Generate a schedule</button>
         <br>
     </div>
@@ -83,24 +76,32 @@
         <table id="scheduleTable">
             <thead>
                 <tr>
-                    <th>Subject (in order of priority)</th>
-                    <th>Time Needed</th>
+                    <th>Pomodoro Cycles Needed</th>
+                    <th>Subject</th>
                 </tr>
             </thead>
             <tbody>
-                <!-- Table rows for generated schedule will go here -->
+                <!-- Table rows for generated schedule go here -->
             </tbody>
         </table>
-        <p>Just quickly this is NOT a recommended study order for you to follow <br> to the letter or something (I'm working on something like that though to replace this).<br> This is just what the priorities are for what you should work on with a <br>random
-            equation I made using the data in the other table. <br>Breaking up your learning into chunks and switching between subjects every <br>once in a while is much better for studying (also the Time Needed <br>estimate sucks lmao don't take it seriously
-            I'll fix it eventually though).
-        </p>
     </div>
-
 
     <script>
         var timerRunning = false;
         var countdownInterval;
+
+        function buttonClicked(btnReturn) {
+            console.log("btnReturn.parentElement.id:");
+            console.log(btnReturn.parentElement.id);
+            children = document.querySelectorAll("div" + "#" + btnReturn.parentElement.id.replace(/\s/g, '') + " > li");
+            children.forEach((item) => {
+                if (item.style.display !== "none") {
+                    item.style.display = "none";
+                } else {
+                    item.style.display = "list-item";
+                }
+            });
+        }
 
         function startOrRestartPomodoro() {
             console.log("Button Pressed");
@@ -122,7 +123,7 @@
         function displayCountdown(duration, type) {
             var countdownDisplay = document.getElementById("countdown");
 
-            countdownInterval = setInterval(function() {
+            countdownInterval = setInterval(function () {
                 var minutes = Math.floor(duration / 60);
                 var seconds = duration % 60;
                 countdownDisplay.innerHTML = formatTime(minutes) + ":" + formatTime(seconds);
@@ -166,9 +167,29 @@
         }
 
         function generateSchedule() {
+
             var table = document.getElementById('editableTable');
             var values = [];
-            var totalTimePerCycle = parseInt(document.getElementById("work").value) + parseInt(document.getElementById("break").value);
+            var cycleLength = parseInt(document.getElementById("work").value) + parseInt(document.getElementById("break").value);
+            var toDoSelect = document.querySelector("#toDoList")
+            toDoSelect.innerHTML = "";
+            loadToDoList();
+
+            var buttonNames = Array.from(document.querySelectorAll(".toDoChecklist > div > button")).map(item => item.textContent)
+
+            console.log("Button Names: ")
+            console.log(typeof buttonNames);
+            console.log(buttonNames);
+
+            var subjectList = [];
+            for (var i = 0; i < table.rows.length; i++) {
+                var row = table.rows[i];
+                var subject = row.cells[0].innerText.trim();
+                console.log(subject);
+                subjectList.push(subject);
+            }
+            console.log(subjectList);
+
 
             for (var i = 1; i < table.rows.length; i++) {
                 var row = table.rows[i];
@@ -179,14 +200,48 @@
                 var workload = parseInt(row.cells[2].innerText);
                 var enjoyment = parseInt(row.cells[3].innerText);
 
-                console.log(urgency);
+                //console.log(table.rows.length);
+                //console.log(toDoSelect.childElementCount / 3);
+
+                if (table.rows.length - 1 > toDoSelect.childElementCount / 3 && buttonNames.indexOf(subject) == -1) {
+                    console.log("making a new one");
+                    var divElement = document.createElement("div");
+                    divElement.id = subject.concat("List").replace(/\s/g, '');
+
+                    var buttonElement = document.createElement("button");
+                    buttonElement.textContent = subject;
+                    buttonElement.setAttribute("onclick", "buttonClicked(this)");
+                    buttonElement.classList.add("subjectBtn");
+
+                    var listItem = document.createElement("li");
+                    listItem.setAttribute("contenteditable", "true");
+                    listItem.setAttribute("onkeydown", "addOrRemoveItem(event)");
+                    listItem.classList.add("todoListEntry");
+                    listItem.textContent = "...";
+                    divElement.appendChild(buttonElement);
+                    divElement.appendChild(listItem);
+
+                    var targetDiv = document.querySelector("#toDoList");
+                    targetDiv.appendChild(divElement);
+                    targetDiv.appendChild(document.createElement("br"));
+                    targetDiv.appendChild(document.createElement("br"));
+                } else if (table.rows.length - 1 < toDoSelect.childElementCount / 3) {
+                    console.log(table.rows.length - 1);
+                    console.log(toDoSelect.childElementCount / 3);
+                    var buttonIndex = buttonNames.indexOf(subject);
+                    console.log(buttonNames);
+                    buttonNames = buttonNames.filter(n => !subjectList.includes(n))
+                    buttonNames.forEach(item => {
+                        var subjectButton = document.querySelector("#" + item.concat("List").replace(/\s/g, '') + " > button");
+                        subjectButton.parentElement.remove();
+                    })
+                }
+                saveToDoList();
+
                 const assignmentDate = new Date(urgency);
                 const currentDate = new Date();
-                console.log(assignmentDate);
-                console.log(currentDate);
                 const diffTime = Math.abs(currentDate - assignmentDate);
                 const days_raw = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                console.log(days_raw + " days");
 
                 if (days_raw > 30) {
                     var days = 30;
@@ -196,10 +251,9 @@
                 }
 
                 var scale = (1 + (days / 25)) * (workload + enjoyment * 0.4);
-                console.log(scale);
 
                 if (!isNaN(workload) && !isNaN(enjoyment)) {
-                    var timeNeeded = workload * 8;
+                    var timeNeeded = workload * 60;
                     values.push({
                         subject: subject,
                         scale: scale,
@@ -207,90 +261,86 @@
                     });
                 }
             }
+            saveToDoList();
 
-            values.sort(function(a, b) {
+            values.sort(function (a, b) {
                 return b.scale - a.scale;
             });
 
+            var totalCyclesNeeded = values.reduce((total, obj) => obj.timeNeeded + total, 0) / cycleLength;
+
             var scheduleTable = document.getElementById('scheduleTable').getElementsByTagName('tbody')[0];
+
             scheduleTable.innerHTML = '';
 
-            for (var j = 0; j < values.length; j++) {
-                var subject = values[j].subject;
-                var timeNeeded = values[j].timeNeeded;
+            var blocks = [];
 
-                var newRow = scheduleTable.insertRow();
-                var subjectCell = newRow.insertCell(0);
-                var timeNeededCell = newRow.insertCell(1);
+            var schedule = [];
+            var timePerSubject = 60 //parseInt(document.getElementById('subjectLength').value);
+            var cyclesPerSwitch = timePerSubject / cycleLength; //2
+            var totalCycles = 0;
+            var currentIndex = 0;
+            var prevSubject = null;
 
-                subjectCell.innerHTML = subject;
-                timeNeededCell.innerHTML = timeNeeded + " minutes";
-            }
-        }
+            while (totalCycles < totalCyclesNeeded && values.length > 0) {
 
-        function handleKeyPress(event) {
-            if (event.key === "Enter") {
-                if (event.target.closest('#editableTable')) {
-                    addRow();
-                } else {
-                    addTask();
+                var subject = values[currentIndex].subject;
+                if (subject !== prevSubject) {
+                    var timeNeeded = values[currentIndex].timeNeeded;
+                    var cyclesNeeded = timeNeeded / cycleLength;
+                    var cyclesRemaining = cyclesNeeded - cyclesPerSwitch
+                    if (cyclesRemaining < cyclesPerSwitch) {
+                        schedule.push({
+                            subject: subject,
+                            cycles: cyclesRemaining
+                        });
+                    } else {
+                        schedule.push({
+                            subject: subject,
+                            cycles: cyclesPerSwitch
+                        });
+                    }
+
+                    totalCycles += cyclesPerSwitch;
+                    prevSubject = subject;
+                }
+
+                currentIndex++;
+                if (currentIndex >= values.length) {
+                    currentIndex = 0;
                 }
             }
-        }
 
-        function addTaskEventListeners(taskElement) {
-            // Add event listener to toggle strikethrough on single click
-            taskElement.addEventListener("click", function() {
-                this.classList.toggle("strikethrough");
-                updateToDoList();
-                getTaskFraction();
-            });
+            for (var i = 0; i < schedule.length - 1; i++) {
+                var newRow = scheduleTable.insertRow();
+                var cyclesNeededCell = newRow.insertCell(0);
+                var subjectCell = newRow.insertCell(1);
 
-            // Add event listener to remove task on double click
-            taskElement.addEventListener("dblclick", function() {
-                this.remove();
-                updateToDoList();
-            });
-        }
-
-        function addTask() {
-            var taskInput = document.getElementById("newTaskInput");
-            var taskText = taskInput.value.trim();
-
-            if (taskText !== "") {
-                var toDoTable = document.getElementById("toDoTable");
-                var newRow = toDoTable.insertRow();
-
-                var cell = newRow.insertCell(0);
-                cell.textContent = taskText;
-
-                // Add event listeners to the new task
-                addTaskEventListeners(newRow);
-
-                taskInput.value = "";
-                updateToDoList();
-            }
-        }
-
-
-        // Store items in toDoChecklist
-        function updateToDoList() {
-            var toDoTable = document.getElementById("toDoTable");
-            var storedToDoList = toDoTable.innerHTML;
-            localStorage.setItem('toDoList', storedToDoList);
-        }
-
-        // Load tasks from localStorage on page load
-        window.onload = function() {
-            var toDoTable = document.getElementById("toDoTable");
-            var storedToDoList = localStorage.getItem('toDoList');
-            if (storedToDoList !== null) {
-                toDoTable.innerHTML = storedToDoList;
+                subjectCell.innerHTML = schedule[i].subject;
+                cyclesNeededCell.innerHTML = schedule[i].cycles + " cycles";
             }
 
-            // Add event listeners to existing tasks loaded from localStorage
-            addEventListenersToTasks();
 
+        };
+
+        function addOrRemoveItem(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                const newListElement = document.createElement('li');
+                newListElement.setAttribute('contenteditable', 'true');
+                newListElement.setAttribute('onkeydown', 'addOrRemoveItem(event)');
+                newListElement.classList.add("todoListEntry");
+                newListElement.textContent = ''; // Optionally, you can set initial text here
+                event.target.parentElement.appendChild(newListElement);
+                newListElement.focus(); // Focus on the newly created list item
+            } else if (event.key === "Backspace" && event.target.textContent === "" && event.target.parentElement.childElementCount !== 2) {
+                event.target.parentElement.removeChild(event.target);
+            }
+            saveToDoList();
+        }
+
+
+        window.onload = function () {
             // Retrieve and set stored values for work and break durations
             var storedWork = localStorage.getItem('workDuration');
             var storedBreak = localStorage.getItem('breakDuration');
@@ -314,37 +364,76 @@
             if (storedScheduleTable !== null) {
                 scheduleTable.innerHTML = storedScheduleTable;
             }
+
+            loadToDoList();
         };
 
-        // Store work and break durations when changed
-        document.getElementById('work').addEventListener('input', function() {
+        function saveToDoList() {
+            var toDoListSave = [];
+            var toDoListArr = Array.from(document.querySelectorAll(".toDoChecklist > div"));
+
+            const toDoList = toDoListArr.map(item => ({
+                header: item.getElementsByTagName("button")[0].textContent,
+                content: Array.from(item.getElementsByTagName("li")).map(item => item.textContent)
+            }));
+
+            localStorage.setItem('toDoList', JSON.stringify(toDoList));
+        }
+
+        function loadToDoList() {
+            var savedToDo = JSON.parse(localStorage.getItem('toDoList'));
+
+            if (savedToDo !== null) {
+                for (var i = 0; i < savedToDo.length; i++) {
+                    subject = savedToDo[i]['header'];
+                    var divElement = document.createElement("div");
+                    divElement.id = subject.concat("List").replace(/\s/g, '');;
+
+                    var buttonElement = document.createElement("button");
+                    buttonElement.textContent = subject;
+                    buttonElement.setAttribute("onclick", "buttonClicked(this)");
+                    buttonElement.classList.add("subjectBtn");
+                    divElement.appendChild(buttonElement);
+
+                    for (var j = 0; j < savedToDo[i]['content'].length; j++) {
+                        var currItem = savedToDo[i]['content'][j];
+                        var listItem = document.createElement("li");
+                        listItem.setAttribute("contenteditable", "true");
+                        listItem.setAttribute("onkeydown", "addOrRemoveItem(event)");
+                        listItem.classList.add("todoListEntry");
+                        listItem.textContent = currItem;
+
+                        divElement.appendChild(listItem);
+
+                        var targetDiv = document.querySelector("#toDoList");
+                    }
+                    targetDiv.appendChild(divElement);
+                    targetDiv.appendChild(document.createElement("br"));
+                    targetDiv.appendChild(document.createElement("br"));
+                }
+            }
+        }
+
+        document.getElementById('work').addEventListener('input', function () {
             localStorage.setItem('workDuration', this.value);
         });
 
-        document.getElementById('break').addEventListener('input', function() {
+        document.getElementById('break').addEventListener('input', function () {
             localStorage.setItem('breakDuration', this.value);
         });
 
-        // Store items in editableTable
-        document.getElementById('editableTable').addEventListener('input', function() {
+        document.getElementById('editableTable').addEventListener('input', function () {
             var storedEditableTable = document.getElementById("editableTable").getElementsByTagName('tbody')[0].innerHTML;
             localStorage.setItem('editableTable', storedEditableTable);
         });
 
-        // Store items in scheduleTable
-        document.getElementById('scheduleTable').addEventListener('input', function() {
+        document.getElementById('scheduleTable').addEventListener('input', function () {
             var storedScheduleTable = document.getElementById("scheduleTable").getElementsByTagName('tbody')[0].innerHTML;
             localStorage.setItem('scheduleTable', storedScheduleTable);
         });
-
-        // Add event listeners to existing tasks loaded from localStorage
-        function addEventListenersToTasks() {
-            var tasks = document.getElementById("toDoTable").getElementsByTagName("tr");
-            for (var i = 0; i < tasks.length; i++) {
-                addTaskEventListeners(tasks[i]);
-            }
-        }
     </script>
+
+
 </body>
 
 </html>

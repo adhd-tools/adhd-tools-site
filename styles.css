@@ -1,12 +1,20 @@
 body {
-    background-color: rgb(210, 233, 236);
+    background-color: #1D3557;
 }
 
 .timerInput {
-    background-color: rgb(0, 183, 255);
+    background-color: #A8DADC;
     position: relative;
+    border: none;
+    padding-left: 9px;
 }
 
+.poppins {
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+  }
+  
 .input-container {
     position: relative;
 }
@@ -15,23 +23,27 @@ div,
 label {
     display: inline-block;
     vertical-align: top;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color:#e1e9de;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: normal;
 }
 
 .timerLabel {
     font-size: 17px;
+
 }
 
 .timer {
     float: right;
-    height: 250px;
+    height: 300px;
     width: 15%;
     text-align: center;
     margin-right: 2%;
     margin-top: 1%;
-    border: 5px solid rgb(26, 76, 168);
+    border: 5px solid rgb(15, 46, 104);
     border-radius: 25px;
-    background-color: cornflowerblue;
+    background-color: #457B9D;
     clear: both;
 }
 
@@ -47,9 +59,9 @@ label {
 }
 
 .editableTable {
-    margin-left: 25%;
-    margin-top: 1.5%;
-    position: fixed;
+    margin-left: 10%;
+    margin-top: 4%;
+    position: relative;
     clear: both;
 }
 
@@ -58,11 +70,15 @@ td {
     border: 1px solid black;
     padding: 8px;
     text-align: left;
-    background-color: rgba(126, 205, 255, 0.935);
+    color: #1D3557;
+    background-color: rgb(168, 218, 220);
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: normal;
 }
 
 th {
-    background-color: #f2f2f2;
+    background-color: rgb(230, 57, 70);
 }
 
 .scheduleTable {
@@ -81,8 +97,8 @@ th {
 #timerStart {
     font-size: 20px;
     border-radius: 10px;
-    border: 3px solid blue;
-    background-color: dodgerblue;
+    border: 3px solid rgba(0, 0, 48, 0.966);
+    background-color: rgb(14, 75, 136);
 }
 
 #work,
@@ -94,6 +110,7 @@ th {
     position: absolute;
     margin-left: 0.75%;
     margin-top: 0.5%;
+    width: 15%;
 }
 
 .indented {
@@ -104,19 +121,16 @@ th {
     text-decoration: line-through;
 }
 
-.indented {
-    margin-left: 20px;
-}
-
-#toDoTable {
-    border-collapse: collapse;
-}
-
-#toDoTable td {
-    padding: 8px;
+.subjectBtn {
+    background-color: #457B9D;
     border: none;
+    width: 200px;
+    font-size: 18px;
 }
 
-#toDoTable tr:nth-child(even) {
-    background-color: #f2f2f2;
+.todoListEntry {
+    background-color: #A8DADC;
+    color: black;
+    padding-left: 15px;
+    padding-right: 15px;
 }
