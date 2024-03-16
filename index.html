@@ -167,7 +167,6 @@
         }
 
         function generateSchedule() {
-
             var table = document.getElementById('editableTable');
             var values = [];
             var cycleLength = parseInt(document.getElementById("work").value) + parseInt(document.getElementById("break").value);
@@ -207,7 +206,6 @@
                     console.log("making a new one");
                     var divElement = document.createElement("div");
                     divElement.id = subject.concat("List").replace(/\s/g, '');
-
                     var buttonElement = document.createElement("button");
                     buttonElement.textContent = subject;
                     buttonElement.setAttribute("onclick", "buttonClicked(this)");
@@ -237,89 +235,7 @@
                     })
                 }
                 saveToDoList();
-
-                const assignmentDate = new Date(urgency);
-                const currentDate = new Date();
-                const diffTime = Math.abs(currentDate - assignmentDate);
-                const days_raw = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-                if (days_raw > 30) {
-                    var days = 30;
-                } else if (days_raw <= 30) {
-                    var days = Math.ceil(days_raw);
-                    days = 30 - days;
-                }
-
-                var scale = (1 + (days / 25)) * (workload + enjoyment * 0.4);
-
-                if (!isNaN(workload) && !isNaN(enjoyment)) {
-                    var timeNeeded = workload * 60;
-                    values.push({
-                        subject: subject,
-                        scale: scale,
-                        timeNeeded: timeNeeded
-                    });
-                }
             }
-            saveToDoList();
-
-            values.sort(function (a, b) {
-                return b.scale - a.scale;
-            });
-
-            var totalCyclesNeeded = values.reduce((total, obj) => obj.timeNeeded + total, 0) / cycleLength;
-
-            var scheduleTable = document.getElementById('scheduleTable').getElementsByTagName('tbody')[0];
-
-            scheduleTable.innerHTML = '';
-
-            var blocks = [];
-
-            var schedule = [];
-            var timePerSubject = 60 //parseInt(document.getElementById('subjectLength').value);
-            var cyclesPerSwitch = timePerSubject / cycleLength; //2
-            var totalCycles = 0;
-            var currentIndex = 0;
-            var prevSubject = null;
-
-            while (totalCycles < totalCyclesNeeded && values.length > 0) {
-
-                var subject = values[currentIndex].subject;
-                if (subject !== prevSubject) {
-                    var timeNeeded = values[currentIndex].timeNeeded;
-                    var cyclesNeeded = timeNeeded / cycleLength;
-                    var cyclesRemaining = cyclesNeeded - cyclesPerSwitch
-                    if (cyclesRemaining < cyclesPerSwitch) {
-                        schedule.push({
-                            subject: subject,
-                            cycles: cyclesRemaining
-                        });
-                    } else {
-                        schedule.push({
-                            subject: subject,
-                            cycles: cyclesPerSwitch
-                        });
-                    }
-
-                    totalCycles += cyclesPerSwitch;
-                    prevSubject = subject;
-                }
-
-                currentIndex++;
-                if (currentIndex >= values.length) {
-                    currentIndex = 0;
-                }
-            }
-
-            for (var i = 0; i < schedule.length - 1; i++) {
-                var newRow = scheduleTable.insertRow();
-                var cyclesNeededCell = newRow.insertCell(0);
-                var subjectCell = newRow.insertCell(1);
-
-                subjectCell.innerHTML = schedule[i].subject;
-                cyclesNeededCell.innerHTML = schedule[i].cycles + " cycles";
-            }
-
 
         };
 
@@ -371,18 +287,15 @@
         function saveToDoList() {
             var toDoListSave = [];
             var toDoListArr = Array.from(document.querySelectorAll(".toDoChecklist > div"));
-
             const toDoList = toDoListArr.map(item => ({
                 header: item.getElementsByTagName("button")[0].textContent,
                 content: Array.from(item.getElementsByTagName("li")).map(item => item.textContent)
             }));
-
             localStorage.setItem('toDoList', JSON.stringify(toDoList));
         }
 
         function loadToDoList() {
             var savedToDo = JSON.parse(localStorage.getItem('toDoList'));
-
             if (savedToDo !== null) {
                 for (var i = 0; i < savedToDo.length; i++) {
                     subject = savedToDo[i]['header'];
