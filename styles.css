@@ -1,50 +1,115 @@
 body {
-    background-color: #1D3557;
-}
-
-.timerInput {
-    background-color: #A8DADC;
-    position: relative;
-    border: none;
-    padding-left: 9px;
-}
-
-.poppins {
-    font-family: "Poppins", sans-serif;
-    font-weight: 500;
-    font-style: normal;
-  }
-  
-.input-container {
-    position: relative;
+    background-color: #222222;
 }
 
 div,
 label {
     display: inline-block;
     vertical-align: top;
-    color:#e1e9de;
+    color: #d89eff;
     font-family: "Poppins", sans-serif;
     font-weight: 500;
     font-style: normal;
 }
 
-.timerLabel {
-    font-size: 17px;
+#editableTable>thead>tr>th,
+#editableTable>tbody>tr>td {
+    border: 1px solid black;
+    padding: 6px;
+    text-align: left;
+    color: #c267ff;
+    background-color: rgb(65, 64, 64);
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+}
 
+#editableTable>thead>tr>th {
+    background-color: #1d1d1d;
+}
+
+.timerInput {
+    background-color: #cda8dc;
+    position: relative;
+    border: none;
+    padding-left: 9px;
 }
 
 .timer {
-    float: right;
     height: 300px;
     width: 15%;
     text-align: center;
     margin-right: 2%;
     margin-top: 1%;
-    border: 5px solid rgb(15, 46, 104);
+    border: 5px solid #d89eff;
     border-radius: 25px;
-    background-color: #457B9D;
+    background-color: #651799;
     clear: both;
+}
+
+#timerStart {
+    font-size: 20px;
+    border-radius: 10px;
+    border: 3px solid rgba(0, 0, 48, 0.966);
+    background-color: rgb(14, 75, 136);
+}
+
+.subjectBtn {
+    background-color: #457B9D;
+    border: none;
+    width: 200px;
+    font-size: 18px;
+}
+
+.todoListEntry {
+    background-color: #A8DADC;
+    color: black;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+#calendar {
+    border-spacing: 0px;
+    border-collapse: collapse;
+    padding: 0;
+}
+
+.sidebar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    top: 0;
+    right: 0;
+    background-color: #111;
+    word-wrap: break-word;
+    transition: 0.5s;
+    padding-top: 60px;
+    z-index: 999;
+    padding-left: 25px;
+}
+
+.sidebar a {
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    background-color: #111;
+    display: block;
+    transition: 0.5s;
+}
+
+.poppins {
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+}
+
+.input-container {
+    position: relative;
+}
+
+.timerLabel {
+    font-size: 17px;
 }
 
 #countdown {
@@ -65,22 +130,6 @@ label {
     clear: both;
 }
 
-th,
-td {
-    border: 1px solid black;
-    padding: 8px;
-    text-align: left;
-    color: #1D3557;
-    background-color: rgb(168, 218, 220);
-    font-family: "Poppins", sans-serif;
-    font-weight: 500;
-    font-style: normal;
-}
-
-th {
-    background-color: rgb(230, 57, 70);
-}
-
 .scheduleTable {
     margin-top: 3%;
     margin-right: 2%;
@@ -94,43 +143,101 @@ th {
     width: 100%;
 }
 
-#timerStart {
-    font-size: 20px;
-    border-radius: 10px;
-    border: 3px solid rgba(0, 0, 48, 0.966);
-    background-color: rgb(14, 75, 136);
-}
-
 #work,
 #break {
     text-align: center;
 }
 
 .toDoChecklist {
-    position: absolute;
+    position: relative;
     margin-left: 0.75%;
-    margin-top: 0.5%;
     width: 15%;
 }
 
-.indented {
-    margin-left: 20px;
+.sidebar a:hover {
+    color: #f1f1f1;
 }
 
-.strikethrough {
-    text-decoration: line-through;
+.sidebar .closebtn {
+    position: absolute;
+    top: 0px;
+    margin-top: 20px;
+    right: -35px;
+    font-size: 36px;
+    padding-right: 30px;
+    margin-right: 50px;
+    width: 24px;
+    word-wrap: normal;
+    border-radius: 10px;
 }
 
-.subjectBtn {
-    background-color: #457B9D;
-    border: none;
-    width: 200px;
-    font-size: 18px;
+.openbtn:hover {
+    background-color: #444;
 }
 
-.todoListEntry {
-    background-color: #A8DADC;
-    color: black;
-    padding-left: 15px;
-    padding-right: 15px;
+@media screen and (max-height: 450px) {
+    .sidebar {
+        padding-top: 15px;
+    }
+    .sidebar a {
+        font-size: 18px;
+    }
+}
+
+table {
+    border-collapse: collapse;
+    width: 70%;
+}
+
+.logo-image img {
+    width: 25px;
+    height: 25px;
+    overflow: hidden;
+    margin-top: 4px;
+    filter: invert(59%) sepia(21%) saturate(2685%) hue-rotate(217deg) brightness(115%) contrast(112%);
+}
+
+.topnav {
+    background-color: #1d1d1d;
+    overflow: hidden;
+    width: 90%;
+}
+
+.topnav a {
+    float: left;
+    color: #d885ff;
+    text-align: center;
+    padding: 14px 26px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+.topnav a:hover {
+    color: #ddd;
+    background-color: #d885ff;
+}
+
+.calendarItem {
+    border: 1px solid black;
+    padding: 0px;
+    text-align: left;
+    width: 100px;
+    height: 100px;
+    vertical-align: top;
+    background-color: #525252;
+    text-align: left;
+    vertical-align: top;
+    padding: 10px 10px;
+    color: #e09eff;
+}
+
+th.calendarItem {
+    text-align: center;
+    background-color: #1d1d1d;
+    color: #d885ff;
+}
+
+.calendarItem .editable-bar {
+    height: 20px;
+    width: 100%;
 }

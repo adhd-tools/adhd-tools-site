@@ -5,65 +5,43 @@
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8H8GFPPQ3K"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-    
-      gtag('config', 'G-8H8GFPPQ3K');
+        window.dataLayacer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'G-8H8GFPPQ3K');
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="styles.css">
     <title>ADHD Tools</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8871286885860594" crossorigin="anonymous"></script>
-    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#navBar').load('./nav.html');
+        });
+    </script>
 </head>
 
 <body>
-    <div>
-        <h2>To-Do List:</h2>
-        <p>Enter - Add new Row<br>Backspace - Remove empty row<br>This will save just like everything else on the page.</p>
-        <div class="toDoChecklist" id="toDoList">
-            <!-- Rows for generated to do list go here -->
+    <div id="navBar"></div><br><br><br>
+
+    <div id="mySidebar" class="sidebar">
+        <div id="toDoFullDiv">
+            <h2>To-Do List:</h2>
+            <p>Enter - Add new Row<br>Backspace - Remove empty row<br>This will save just like everything else on the page.</p>
+            <div class="toDoChecklist" id="toDoList">
+                <!-- Rows for generated to do list go here -->
+            </div>
         </div>
+        <a href="javascript:void(0)" class="closebtn" id="navbtn" onclick="toggleNav()">&lt&lt</a>
     </div>
-
-    <div class="editableTable">
-        <table id="editableTable">
-            <thead>
-                <tr>
-                    <th>Subject</th>
-                    <th>Due Date (dd/mm/yyyy)</th>
-                    <!-- come up with a better method than this for workload. maybe how long it'd take to do? -->
-                    <th>Time to Complete (hours)</th>
-                    <th>Enjoyment (1-10)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                </tr>
-                <tr>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                </tr>
-            </tbody>
-        </table>
-        <br>
-        <button onclick="addRow()">Add Row</button>
-        <button onclick="removeRow()">Remove Row</button>
-        <button onclick="generateSchedule()">Generate a schedule</button>
-        <br>
-    </div>
-
 
     <div class="timer">
         <br>
@@ -83,23 +61,130 @@
         </div>
     </div>
 
-    <div class="scheduleTable">
-        <table id="scheduleTable">
+    <div class="editableTable">
+        <table id="editableTable">
             <thead>
                 <tr>
-                    <th>Pomodoro Cycles Needed</th>
                     <th>Subject</th>
+                    <th>Due Date (dd/mm/yyyy)</th>
+                    <!-- come up with a better method than this for workload. maybe how long it'd take to do? -->
                 </tr>
             </thead>
             <tbody>
-                <!-- Table rows for generated schedule go here -->
+                <tr>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                </tr>
+                <tr>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                </tr>
             </tbody>
         </table>
+        <br>
+        <button onclick="addRow()">Add Row</button>
+        <button onclick="removeRow()">Remove Row</button>
+        <button onclick="generateSchedule()">Generate a schedule</button>
+        <br>
     </div>
+    <br><br><br><br>
+    <div id="calendar"></div>
+
 
     <script>
-        var timerRunning = false;
-        var countdownInterval;
+        // Sidebar JavaScript functions
+        function openNav() {
+            document.getElementById("mySidebar").style.width = "400px";
+            document.getElementById("navbtn").innerHTML = "&gt&gt";
+            document.getElementById("navbtn").style.marginRight = "450px";
+        }
+
+        function closeNav() {
+            document.getElementById("navbtn").innerHTML = "&lt;&lt;";
+            document.getElementById("mySidebar").style.width = "0";
+            document.getElementById("navbtn").style.marginRight = "50px";
+        }
+
+        function toggleNav() {
+            var navButton = document.getElementById("navbtn");
+            console.log(navButton.innerHTML);
+            if (navButton.innerHTML == "&lt;&lt;") {
+                openNav();
+            } else if (navButton.innerHTML == "&gt;&gt;")
+                closeNav();
+        }
+
+        function createCalendar(year, month, tasks, taskDate, currDay) {
+
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const firstDayOfMonth = new Date(year, month, 1).getDay();
+
+            const startDay = (firstDayOfMonth === 0) ? 6 : firstDayOfMonth - 1;
+
+            const calendar = document.getElementById('calendar');
+            calendar.innerHTML = ''; // Clear previous content
+
+            const table = document.createElement('table');
+            table.style.borderCollapse = "collapse";
+            table.style.tableLayout = "fixed";
+            const header = document.createElement('tr');
+            const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+            for (let day of daysOfWeek) {
+                const th = document.createElement('th');
+                th.classList.add("calendarItem")
+                th.textContent = day;
+                header.appendChild(th);
+            }
+            table.appendChild(header);
+
+            let count = 1;
+            const numRows = Math.ceil((daysInMonth + startDay) / 7);
+
+            for (let i = 0; i < 6; i++) {
+                const row = document.createElement('tr');
+                for (let j = 0; j < 7; j++) {
+                    if (i === 0 && j < startDay) {
+                        const td = document.createElement('td');
+                        td.classList.add("calendarItem")
+                        row.appendChild(td);
+                    } else if (count > daysInMonth) {
+                        break;
+                    } else {
+                        if (month + 1 > 9) {
+                            var date = String(count + "/" + (month + 1) + "/" + year);
+                        } else if (month + 1 < 9) {
+                            var date = String(count + "/0" + (month + 1) + "/" + year);
+                        }
+
+                        const td = document.createElement('td');
+                        td.classList.add("calendarItem");
+                        if (taskDate.includes(date) == true) {
+                            var index = taskDate.indexOf(String(date));
+                            var subject = tasks[index];
+                            td.innerHTML = count + "<br /><br />" + subject;
+                        } else {
+                            td.textContent = count;
+                        }
+
+                        if (count == currDay) {
+                            td.style.color = "red";
+                        }
+
+                        // Creating nested table with color
+                        const nestedTable = document.createElement('table');
+                        nestedTable.style.width = "100%";
+                        nestedTable.style.padding = "0px";
+                        td.appendChild(nestedTable);
+
+                        row.appendChild(td);
+                        count++;
+                    }
+                }
+                table.appendChild(row);
+            }
+            calendar.appendChild(table);
+        }
 
         function buttonClicked(btnReturn) {
             console.log("btnReturn.parentElement.id:");
@@ -113,6 +198,9 @@
                 }
             });
         }
+
+        var timerRunning = false;
+        var countdownInterval;
 
         function startOrRestartPomodoro() {
             console.log("Button Pressed");
@@ -134,7 +222,7 @@
         function displayCountdown(duration, type) {
             var countdownDisplay = document.getElementById("countdown");
 
-            countdownInterval = setInterval(function () {
+            countdownInterval = setInterval(function() {
                 var minutes = Math.floor(duration / 60);
                 var seconds = duration % 60;
                 countdownDisplay.innerHTML = formatTime(minutes) + ":" + formatTime(seconds);
@@ -162,7 +250,7 @@
             var table = document.getElementById('editableTable');
             var newRow = table.insertRow();
 
-            for (var i = 0; i < 4; i++) {
+            for (var i = 0; i < 2; i++) {
                 var cell = newRow.insertCell(i);
                 cell.contentEditable = true;
                 cell.textContent = '';
@@ -187,18 +275,18 @@
 
             var buttonNames = Array.from(document.querySelectorAll(".toDoChecklist > div > button")).map(item => item.textContent)
 
-            console.log("Button Names: ")
-            console.log(typeof buttonNames);
-            console.log(buttonNames);
-
             var subjectList = [];
+            var dateList = [];
             for (var i = 0; i < table.rows.length; i++) {
                 var row = table.rows[i];
                 var subject = row.cells[0].innerText.trim();
-                console.log(subject);
+                var date = row.cells[1].innerText.trim();
                 subjectList.push(subject);
+                dateList.push(date);
             }
-            console.log(subjectList);
+
+            const currentDate = new Date();
+            createCalendar(currentDate.getFullYear(), currentDate.getMonth(), subjectList, dateList, currentDate.getDate());
 
 
             for (var i = 1; i < table.rows.length; i++) {
@@ -207,8 +295,6 @@
                 var urgency = row.cells[1].innerText;
                 var initial = urgency.split(/\//);
                 var urgency = ([initial[1], initial[0], initial[2]].join('/'));
-                var workload = parseInt(row.cells[2].innerText);
-                var enjoyment = parseInt(row.cells[3].innerText);
 
                 //console.log(table.rows.length);
                 //console.log(toDoSelect.childElementCount / 3);
@@ -222,10 +308,13 @@
                     buttonElement.setAttribute("onclick", "buttonClicked(this)");
                     buttonElement.classList.add("subjectBtn");
 
+
                     var listItem = document.createElement("li");
                     listItem.setAttribute("contenteditable", "true");
                     listItem.setAttribute("onkeydown", "addOrRemoveItem(event)");
                     listItem.classList.add("todoListEntry");
+                    listItem.style.wordWrap = "break-word";
+                    listItem.style.wordBreak = "break-all";
                     listItem.textContent = "...";
                     divElement.appendChild(buttonElement);
                     divElement.appendChild(listItem);
@@ -257,6 +346,8 @@
                 newListElement.setAttribute('contenteditable', 'true');
                 newListElement.setAttribute('onkeydown', 'addOrRemoveItem(event)');
                 newListElement.classList.add("todoListEntry");
+                newListElement.style.wordWrap = "break-word";
+                newListElement.style.wordBreak = "break-all";
                 newListElement.textContent = ''; // Optionally, you can set initial text here
                 event.target.parentElement.appendChild(newListElement);
                 newListElement.focus(); // Focus on the newly created list item
@@ -267,7 +358,7 @@
         }
 
 
-        window.onload = function () {
+        window.onload = function() {
             // Retrieve and set stored values for work and break durations
             var storedWork = localStorage.getItem('workDuration');
             var storedBreak = localStorage.getItem('breakDuration');
@@ -283,13 +374,6 @@
             var storedEditableTable = localStorage.getItem('editableTable');
             if (storedEditableTable !== null) {
                 editableTable.innerHTML = storedEditableTable;
-            }
-
-            // Retrieve and set stored values for items in scheduleTable
-            var scheduleTable = document.getElementById("scheduleTable").getElementsByTagName('tbody')[0];
-            var storedScheduleTable = localStorage.getItem('scheduleTable');
-            if (storedScheduleTable !== null) {
-                scheduleTable.innerHTML = storedScheduleTable;
             }
 
             loadToDoList();
@@ -325,6 +409,8 @@
                         listItem.setAttribute("contenteditable", "true");
                         listItem.setAttribute("onkeydown", "addOrRemoveItem(event)");
                         listItem.classList.add("todoListEntry");
+                        listItem.style.wordWrap = "break-word";
+                        listItem.style.wordBreak = "break-all";
                         listItem.textContent = currItem;
 
                         divElement.appendChild(listItem);
@@ -338,22 +424,17 @@
             }
         }
 
-        document.getElementById('work').addEventListener('input', function () {
+        document.getElementById('work').addEventListener('input', function() {
             localStorage.setItem('workDuration', this.value);
         });
 
-        document.getElementById('break').addEventListener('input', function () {
+        document.getElementById('break').addEventListener('input', function() {
             localStorage.setItem('breakDuration', this.value);
         });
 
-        document.getElementById('editableTable').addEventListener('input', function () {
+        document.getElementById('editableTable').addEventListener('input', function() {
             var storedEditableTable = document.getElementById("editableTable").getElementsByTagName('tbody')[0].innerHTML;
             localStorage.setItem('editableTable', storedEditableTable);
-        });
-
-        document.getElementById('scheduleTable').addEventListener('input', function () {
-            var storedScheduleTable = document.getElementById("scheduleTable").getElementsByTagName('tbody')[0].innerHTML;
-            localStorage.setItem('scheduleTable', storedScheduleTable);
         });
     </script>
 
