@@ -37,7 +37,6 @@
             <h2>To-Do List:</h2>
             <p>Enter - Add new Row<br>Backspace - Remove empty row<br>This will save just like everything else on the page.</p>
             <div class="toDoChecklist" id="toDoList">
-                <!-- Rows for generated to do list go here -->
             </div>
         </div>
         <a href="javascript:void(0)" class="closebtn" id="navbtn" onclick="toggleNav()">&lt&lt</a>
@@ -75,10 +74,6 @@
                     <td contenteditable="true"></td>
                     <td contenteditable="true"></td>
                 </tr>
-                <tr>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                </tr>
             </tbody>
         </table>
         <br>
@@ -89,9 +84,14 @@
     </div>
     <br><br><br><br>
     <div id="calendar"></div>
-
+    <br><br><br><br>
+    <button onclick="clearStorage()">Refresh Data. Should fix issues after updates but deletes storage.</button>
 
     <script>
+        function clearStorage() {
+            localStorage.clear();
+            window.location.reload(true);
+        }
         // Sidebar JavaScript functions
         function openNav() {
             document.getElementById("mySidebar").style.width = "400px";
