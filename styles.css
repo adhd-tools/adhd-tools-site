@@ -37,9 +37,10 @@ label {
 
 .timer {
     height: 300px;
-    width: 15%;
+    width: 260px;
     text-align: center;
     margin-right: 2%;
+    margin-left: 2%;
     margin-top: 1%;
     border: 5px solid #d89eff;
     border-radius: 25px;
@@ -47,11 +48,15 @@ label {
     clear: both;
 }
 
-#timerStart {
+.varBtn {
+    margin-left: 2%;
+}
+
+.timerBtn {
     font-size: 20px;
     border-radius: 10px;
-    border: 3px solid rgba(0, 0, 48, 0.966);
-    background-color: rgb(14, 75, 136);
+    border: 2px solid rgba(0, 0, 48, 0.966);
+    background-color: rgb(163, 27, 197);
 }
 
 .subjectBtn {
@@ -124,8 +129,8 @@ label {
 }
 
 .editableTable {
-    margin-left: 10%;
-    margin-top: 4%;
+    margin-left: 5%;
+    margin-top: 6%;
     position: relative;
     clear: both;
 }

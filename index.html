@@ -5,15 +5,18 @@
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8H8GFPPQ3K"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-    
-      gtag('config', 'G-8H8GFPPQ3K');
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'G-8H8GFPPQ3K');
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="styles.css">
     <title>ADHD Tools</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,7 +46,9 @@
         <br>
         <div id="countdown">--:--</div>
         <br>
-        <button id="timerStart" onclick="startOrRestartPomodoro()">Start Timer</button>
+        <br>
+        <button id="timerStart" class="timerBtn" onclick="startOrRestartPomodoro()">Start</button>
+        <button id="timerPause" class="timerBtn" onclick="pausePomodoro()">|| ▷</button>
         <br>
         <br>
         <label for="work" class="timerLabel">Duration of Work (minutes):</label><br>
@@ -80,9 +85,10 @@
         <br>
     </div>
     <br><br><br><br>
+    <button class="varBtn" onclick="toggleCalendar()">Toggle Calendar</button><br>
     <div id="calendar"></div>
     <br><br><br><br>
-    <button onclick="clearStorage()">Refresh Data. Should fix issues after updates but deletes storage.</button>
+    <button class="varBtn" onclick="clearStorage()">Refresh Data. Should fix issues after updates but deletes storage.</button>
 
     <script>
         function clearStorage() {
@@ -91,9 +97,9 @@
         }
         // Sidebar JavaScript functions
         function openNav() {
-            document.getElementById("mySidebar").style.width = "400px";
+            document.getElementById("mySidebar").style.width = "320px";
             document.getElementById("navbtn").innerHTML = "&gt&gt";
-            document.getElementById("navbtn").style.marginRight = "450px";
+            document.getElementById("navbtn").style.marginRight = "370px";
         }
 
         function closeNav() {
@@ -181,6 +187,17 @@
                 table.appendChild(row);
             }
             calendar.appendChild(table);
+            console.log(calendar.style.visibility);
+        }
+
+        function toggleCalendar() {
+            if (calendar.style.visibility != "hidden") {
+                calendar.style.visibility = "hidden";
+                calendar.style.position = "absolute";
+            } else {
+                calendar.style.visibility = "visible";
+                calendar.style.position = "static";
+            }
         }
 
         function buttonClicked(btnReturn) {
@@ -205,13 +222,31 @@
                 clearInterval(countdownInterval);
                 timerRunning = false;
                 document.getElementById("countdown").innerHTML = "--:--";
-                document.getElementById("timerStart").innerHTML = "Start Timer";
+                document.getElementById("timerStart").innerHTML = "Start";
             } else {
                 var workDuration = parseInt(document.getElementById("work").value);
                 var breakDuration = parseInt(document.getElementById("break").value);
-                document.getElementById("timerStart").innerHTML = "Stop Timer";
+                document.getElementById("timerStart").innerHTML = "Reset";
 
                 displayCountdown(workDuration * 60, "Work");
+                timerRunning = true;
+            }
+        }
+
+        function pausePomodoro() {
+            var timerNum = document.getElementById("countdown").innerHTML;
+            console.log(timerNum);
+            if (timerRunning) {
+                clearInterval(countdownInterval);
+                timerRunning = false;
+                document.getElementById("countdown").innerHTML = timerNum;
+                document.getElementById("timerPause").innerHTML = "▷";
+            } else {
+                var workDuration = parseInt(document.getElementById("work").value);
+                var breakDuration = parseInt(document.getElementById("break").value);
+                document.getElementById("timerPause").innerHTML = " || ";
+                var timeArr = timerNum.split(":");
+                displayCountdown((parseInt(timeArr[0]) + (parseInt(timeArr[1] - 1) / 60)) * 60, "Work");
                 timerRunning = true;
             }
         }
