@@ -16,30 +16,54 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/styles.css">
     <title>ADHD Tools</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('#navBar').load('./nav.html');
         });
     </script>
 </head>
 
-<body>
+<body spellcheck="false">
     <div id="navBar"></div><br><br><br>
 
-    <div id="mySidebar" class="sidebar">
-        <div id="toDoFullDiv">
-            <h2>To-Do List:</h2>
-            <p>Enter - Add new Row<br>Backspace - Remove empty row<br>This will save just like everything else on the page.</p>
-            <div class="toDoChecklist" id="toDoList">
-            </div>
+    <div id="mySidebar" class="sidebar" onmouseenter="openNav()" onmouseleave="closeNav()">
+        Press "Generate a Schedule" to fill the timetable 
+        <br>
+        <div id="calendar">
+            <button class="backBtn" onclick="generateSchedule(-7)">&larr;</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Monday </th>
+                        <th>Tuesday </th>
+                        <th>Wednesday </th>
+                        <th>Thursday </th>
+                        <th>Friday </th>
+                        <th>Saturday </th>
+                        <th>Sunday </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+            <button class="forwdBtn" onclick="generateSchedule(7)">&rarr;</button>
         </div>
-        <a href="javascript:void(0)" class="closebtn" id="navbtn" onclick="toggleNav()">&lt&lt</a>
+        <a href="javascript:void(0)" class="closebtn" id="navbtn" onclick="toggleNav()">&uarr;&uarr;</a>
     </div>
 
     <div class="timer">
@@ -68,136 +92,228 @@
                 <tr>
                     <th>Subject</th>
                     <th>Due Date (dd/mm/yyyy)</th>
-                    <!-- come up with a better method than this for workload. maybe how long it'd take to do? -->
+                    <th>Tasks (press enter to break down task and click to complete)</th>
+                    <th>Completion</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td contenteditable="true"></td>
                     <td contenteditable="true"></td>
+                    <td contenteditable="false">
+                        <span contenteditable='true' style='padding-right: 150px' onkeypress='goblintools(event)'></span>
+                        <button contenteditable='false' onclick='goblintools(event)' class='expandBtn'>&uarr;</button>
+                    </td>
+                    <td contenteditable="false"></td>
                 </tr>
             </tbody>
         </table>
         <br>
-        <button onclick="addRow()">Add Row</button>
-        <button onclick="removeRow()">Remove Row</button>
-        <button onclick="generateSchedule()">Generate a schedule</button>
+        <button class="varBtn" onclick="addRow()">Add Row</button>
+        <button class="varBtn" onclick="removeRow()">Remove Row</button>
+        <button class="varBtn" onclick="generateSchedule(0)">Generate a schedule</button>
         <br>
     </div>
-    <br><br><br><br>
-    <button class="varBtn" onclick="toggleCalendar()">Toggle Calendar</button><br>
-    <div id="calendar"></div>
-    <br><br><br><br>
-    <button class="varBtn" onclick="clearStorage()">Refresh Data. Should fix issues after updates but deletes storage.</button>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <div class="customSpace">
+        For writing your own notes (click and drag to extend area):
+        <br>    
+        <textarea id="customNotes" contenteditable="true" wrap="soft"></textarea>
+    </div>
+
+    <br>
+    <br>
+    <br>
+
+    <button class="varBtn" onclick="clearStorage()">Refresh Data. Should fix issues after updates but deletes
+        storage.</button>
+
+    <script type="module">
+        import confetti from "https://cdn.skypack.dev/canvas-confetti";
+
+        function throwConfetti(event) {
+            confetti({
+                origin: {
+                    x: (event.pageX / window.innerWidth),
+                    y: (event.pageY / window.innerHeight)
+                }
+            });
+        }
+
+        window.throwConfetti = throwConfetti;
+    </script>
 
     <script>
+        var totalNum = 0;
+        var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+        function getWeek(fromDate) {
+            var monday = new Date(fromDate);
+            monday.setDate(fromDate.getDate() - (fromDate.getDay() + 6) % 7);
+            var result = [new Date(monday)];
+
+            for (var i = 1; i < 7; i++) {
+                var nextDay = new Date(monday);
+                nextDay.setDate(monday.getDate() + i);
+                result.push(nextDay);
+            }
+            return result;
+        }
+
+        function convertDate(inputFormat) {
+            function pad(s) { return (s < 10) ? '0' + s : s; }
+            var d = new Date(inputFormat)
+            return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join('/')
+        }
+
+        function strikethrough(item) {
+            var fullList = item.parentElement;
+
+            if (item.classList == "goblinList") {
+                item.classList.remove("goblinList");
+                item.classList.add("goblinListST");
+                //document.querySelectorAll('#main-div .specific-class').length;
+            } else {
+                item.classList.add("goblinList");
+                item.classList.remove("goblinListST");
+            }
+            var completedPct = (fullList.getElementsByClassName("goblinListST").length / fullList.children.length) * 100;
+            completedPct = +completedPct.toFixed(1).toString();
+            fullList.parentElement.nextElementSibling.textContent = `${completedPct}%`;
+
+            if (completedPct == "100") {
+                throwConfetti(event);
+            }
+        }
+
+        function goblintools() {
+            if (event.key === "Enter" && event.srcElement.localName == "span") {
+                event.preventDefault();
+                var task = event.srcElement.textContent;
+                var td = event.srcElement.parentElement;
+
+                const xhr = new XMLHttpRequest();
+                xhr.open("POST", "https://goblin.tools/api/todo/");
+                xhr.setRequestHeader("Content-Type", "application/json")
+                xhr.setRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36 Edg/100.0.1185.36")
+                const body = JSON.stringify({
+                    Ancestors: [],
+                    Spiciness: 2,
+                    Text: task
+                });
+                xhr.onload = () => {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        const ul = document.createElement("ul");
+                        const br = document.createElement("br");
+
+                        var responses = JSON.parse(xhr.responseText);
+                        responses.forEach((response) => {
+                            var li = document.createElement("li");
+                            li.classList.add("goblinList");
+                            li.setAttribute("onclick", "strikethrough(this)");
+                            li.textContent = response;
+                            ul.append(li);
+                        },
+                        )
+
+                        if (td.children.length < 3) {
+                            td.append(br);
+                            td.append(ul);
+                        } else {
+                            td.removeChild(td.lastChild);
+                            td.removeChild(td.lastChild);
+                            td.append(br);
+                            td.append(ul);
+                        }
+                        console.log(td.children);
+
+                    } else {
+                        console.log(`Error: ${xhr.status}`);
+                    }
+                };
+                xhr.send(body);
+                event.srcElement.nextElementSibling.textContent = "\u2193";
+            }
+            else if (event.srcElement.localName == "button") {
+                var list = event.srcElement.parentElement.children[3];
+                console.log(list.style.visibility);
+                if (list.style.visibility != "hidden") {
+                    console.log("two");
+                    event.srcElement.textContent = "\u2193";
+                    list.style.visibility = "hidden";
+                    list.style.position = "absolute";
+                } else {
+                    console.log("one");
+                    event.srcElement.textContent = "\u2191";
+                    list.style.visibility = "visible";
+                    list.style.position = "static";
+                }
+            }
+        }
+
         function clearStorage() {
             localStorage.clear();
             window.location.reload(true);
         }
-        // Sidebar JavaScript functions
+
         function openNav() {
-            document.getElementById("mySidebar").style.width = "320px";
-            document.getElementById("navbtn").innerHTML = "&gt&gt";
-            document.getElementById("navbtn").style.marginRight = "370px";
+            document.getElementById("mySidebar").style.height = "320px";
+            document.getElementById("navbtn").innerHTML = "&darr;&darr;";
+            document.getElementById("navbtn").style.marginBottom = "300px";
         }
 
         function closeNav() {
-            document.getElementById("navbtn").innerHTML = "&lt;&lt;";
-            document.getElementById("mySidebar").style.width = "0";
-            document.getElementById("navbtn").style.marginRight = "50px";
+            document.getElementById("navbtn").innerHTML = "&uarr;&uarr;";
+            document.getElementById("mySidebar").style.height = "0";
+            document.getElementById("navbtn").style.marginBottom = "0px";
         }
 
         function toggleNav() {
             var navButton = document.getElementById("navbtn");
             console.log(navButton.innerHTML);
-            if (navButton.innerHTML == "&lt;&lt;") {
+            if (navButton.innerHTML == "↑↑") {
                 openNav();
-            } else if (navButton.innerHTML == "&gt;&gt;")
+            } else if (navButton.innerHTML == "↓↓") {
                 closeNav();
+            }
         }
 
-        function createCalendar(year, month, tasks, taskDate, currDay) {
+        function makeCalendar(subjects, number) {
+            totalNum += number
+            console.log(totalNum)
 
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            const firstDayOfMonth = new Date(year, month, 1).getDay();
+            var tableHead = document.querySelector("#calendar > table > thead");
+            var tableBody = document.querySelector("#calendar > table > tbody");
 
-            const startDay = (firstDayOfMonth === 0) ? 6 : firstDayOfMonth - 1;
+            var dateTime = new Date();
 
-            const calendar = document.getElementById('calendar');
-            calendar.innerHTML = ''; // Clear previous content
-
-            const table = document.createElement('table');
-            table.style.borderCollapse = "collapse";
-            table.style.tableLayout = "fixed";
-            const header = document.createElement('tr');
-            const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
-            for (let day of daysOfWeek) {
-                const th = document.createElement('th');
-                th.classList.add("calendarItem")
-                th.textContent = day;
-                header.appendChild(th);
+            if (number != 0) {
+                dateTime.setDate(dateTime.getDate() + totalNum);
             }
-            table.appendChild(header);
 
-            let count = 1;
-            const numRows = Math.ceil((daysInMonth + startDay) / 7);
+            const daysOfWeek = getWeek(dateTime);
+            console.log(daysOfWeek);
 
-            for (let i = 0; i < 6; i++) {
-                const row = document.createElement('tr');
-                for (let j = 0; j < 7; j++) {
-                    if (i === 0 && j < startDay) {
-                        const td = document.createElement('td');
-                        td.classList.add("calendarItem")
-                        row.appendChild(td);
-                    } else if (count > daysInMonth) {
-                        break;
-                    } else {
-                        if (month + 1 > 9) {
-                            var date = String(count + "/" + (month + 1) + "/" + year);
-                        } else if (month + 1 < 9) {
-                            var date = String(count + "/0" + (month + 1) + "/" + year);
-                        }
-
-                        const td = document.createElement('td');
-                        td.classList.add("calendarItem");
-                        if (taskDate.includes(date) == true) {
-                            var index = taskDate.indexOf(String(date));
-                            var subject = tasks[index];
-                            td.innerHTML = count + "<br /><br />" + subject;
-                        } else {
-                            td.textContent = count;
-                        }
-
-                        if (count == currDay) {
-                            td.style.color = "red";
-                        }
-
-                        // Creating nested table with color
-                        const nestedTable = document.createElement('table');
-                        nestedTable.style.width = "100%";
-                        nestedTable.style.padding = "0px";
-                        td.appendChild(nestedTable);
-
-                        row.appendChild(td);
-                        count++;
-                    }
+            var row1 = tableHead.children[0];
+            var row2 = tableBody.children[0];
+            for (var i = 0; i < 7; i++) {
+                row1.cells[i].innerText = `${days[daysOfWeek[i].getDay()]}\u00A0${daysOfWeek[i].getDate()}`
+                if (number != 0) {
+                    row2.cells[i].innerText = "";
                 }
-                table.appendChild(row);
-            }
-            calendar.appendChild(table);
-            console.log(calendar.style.visibility);
-        }
 
-        function toggleCalendar() {
-            if (calendar.style.visibility != "hidden") {
-                calendar.style.visibility = "hidden";
-                calendar.style.position = "absolute";
-            } else {
-                calendar.style.visibility = "visible";
-                calendar.style.position = "static";
+                if (Object.values(subjects).indexOf(convertDate(daysOfWeek[i])) > -1) {
+                    row2.cells[i].innerText = Object.keys(subjects).find(key => subjects[key] === convertDate(daysOfWeek[i]));
+                }
             }
+
+
+
         }
 
         function buttonClicked(btnReturn) {
@@ -254,7 +370,7 @@
         function displayCountdown(duration, type) {
             var countdownDisplay = document.getElementById("countdown");
 
-            countdownInterval = setInterval(function() {
+            countdownInterval = setInterval(function () {
                 var minutes = Math.floor(duration / 60);
                 var seconds = duration % 60;
                 countdownDisplay.innerHTML = formatTime(minutes) + ":" + formatTime(seconds);
@@ -281,11 +397,16 @@
         function addRow() {
             var table = document.getElementById('editableTable');
             var newRow = table.insertRow();
-
-            for (var i = 0; i < 2; i++) {
+            var cell = newRow.insertCell(i);
+            for (var i = 0; i < 3; i++) {
                 var cell = newRow.insertCell(i);
                 cell.contentEditable = true;
-                cell.textContent = '';
+                if (i > 1) {
+                    cell.contentEditable = false;
+                }
+                if (i == 2) {
+                    cell.innerHTML = "<span contenteditable='true' style='padding-right: 150px;' onkeypress='goblintools(event)'></span><button contenteditable='false' onclick='goblintools(event)' class='expandBtn'>&uarr;</button>"
+                }
             }
         }
 
@@ -297,101 +418,24 @@
             }
         }
 
-        function generateSchedule() {
+        function generateSchedule(shiftNum) {
             var table = document.getElementById('editableTable');
-            var values = [];
-            var cycleLength = parseInt(document.getElementById("work").value) + parseInt(document.getElementById("break").value);
-            var toDoSelect = document.querySelector("#toDoList")
-            toDoSelect.innerHTML = "";
-            loadToDoList();
 
-            var buttonNames = Array.from(document.querySelectorAll(".toDoChecklist > div > button")).map(item => item.textContent)
-
-            var subjectList = [];
-            var dateList = [];
-            for (var i = 0; i < table.rows.length; i++) {
-                var row = table.rows[i];
-                var subject = row.cells[0].innerText.trim();
-                var date = row.cells[1].innerText.trim();
-                subjectList.push(subject);
-                dateList.push(date);
-            }
-
-            const currentDate = new Date();
-            createCalendar(currentDate.getFullYear(), currentDate.getMonth(), subjectList, dateList, currentDate.getDate());
-
+            var timetable = {};
 
             for (var i = 1; i < table.rows.length; i++) {
                 var row = table.rows[i];
                 var subject = row.cells[0].innerText.trim();
-                var urgency = row.cells[1].innerText;
-                var initial = urgency.split(/\//);
-                var urgency = ([initial[1], initial[0], initial[2]].join('/'));
+                var date = row.cells[1].innerText.trim();
+                Object.assign(timetable, { [subject]: date })
+            };
+            console.log(timetable);
+            makeCalendar(timetable, shiftNum);
 
-                //console.log(table.rows.length);
-                //console.log(toDoSelect.childElementCount / 3);
-
-                if (table.rows.length - 1 > toDoSelect.childElementCount / 3 && buttonNames.indexOf(subject) == -1) {
-                    console.log("making a new one");
-                    var divElement = document.createElement("div");
-                    divElement.id = subject.concat("List").replace(/\s/g, '');
-                    var buttonElement = document.createElement("button");
-                    buttonElement.textContent = subject;
-                    buttonElement.setAttribute("onclick", "buttonClicked(this)");
-                    buttonElement.classList.add("subjectBtn");
-
-
-                    var listItem = document.createElement("li");
-                    listItem.setAttribute("contenteditable", "true");
-                    listItem.setAttribute("onkeydown", "addOrRemoveItem(event)");
-                    listItem.classList.add("todoListEntry");
-                    listItem.style.wordWrap = "break-word";
-                    listItem.style.wordBreak = "break-all";
-                    listItem.textContent = "...";
-                    divElement.appendChild(buttonElement);
-                    divElement.appendChild(listItem);
-
-                    var targetDiv = document.querySelector("#toDoList");
-                    targetDiv.appendChild(divElement);
-                    targetDiv.appendChild(document.createElement("br"));
-                    targetDiv.appendChild(document.createElement("br"));
-                } else if (table.rows.length - 1 < toDoSelect.childElementCount / 3) {
-                    console.log(table.rows.length - 1);
-                    console.log(toDoSelect.childElementCount / 3);
-                    var buttonIndex = buttonNames.indexOf(subject);
-                    console.log(buttonNames);
-                    buttonNames = buttonNames.filter(n => !subjectList.includes(n))
-                    buttonNames.forEach(item => {
-                        var subjectButton = document.querySelector("#" + item.concat("List").replace(/\s/g, '') + " > button");
-                        subjectButton.parentElement.remove();
-                    })
-                }
-                saveToDoList();
-            }
-
-        };
-
-        function addOrRemoveItem(event) {
-            if (event.key === "Enter") {
-                event.preventDefault();
-                const newListElement = document.createElement('li');
-                newListElement.setAttribute('contenteditable', 'true');
-                newListElement.setAttribute('onkeydown', 'addOrRemoveItem(event)');
-                newListElement.classList.add("todoListEntry");
-                newListElement.style.wordWrap = "break-word";
-                newListElement.style.wordBreak = "break-all";
-                newListElement.textContent = ''; // Optionally, you can set initial text here
-                event.target.parentElement.appendChild(newListElement);
-                newListElement.focus(); // Focus on the newly created list item
-            } else if (event.key === "Backspace" && event.target.textContent === "" && event.target.parentElement.childElementCount !== 2) {
-                event.target.parentElement.removeChild(event.target);
-            }
-            saveToDoList();
         }
 
 
-        window.onload = function() {
-            // Retrieve and set stored values for work and break durations
+        window.onload = function () {
             var storedWork = localStorage.getItem('workDuration');
             var storedBreak = localStorage.getItem('breakDuration');
             if (storedWork !== null) {
@@ -408,69 +452,32 @@
                 editableTable.innerHTML = storedEditableTable;
             }
 
-            loadToDoList();
+            var customNotes = localStorage.getItem('customNotes')
+            if (customNotes !== null) {
+                document.getElementById("customNotes").value = customNotes;
+            }
+
+            //loadToDoList();
         };
 
-        function saveToDoList() {
-            var toDoListSave = [];
-            var toDoListArr = Array.from(document.querySelectorAll(".toDoChecklist > div"));
-            const toDoList = toDoListArr.map(item => ({
-                header: item.getElementsByTagName("button")[0].textContent,
-                content: Array.from(item.getElementsByTagName("li")).map(item => item.textContent)
-            }));
-            localStorage.setItem('toDoList', JSON.stringify(toDoList));
-        }
-
-        function loadToDoList() {
-            var savedToDo = JSON.parse(localStorage.getItem('toDoList'));
-            if (savedToDo !== null) {
-                for (var i = 0; i < savedToDo.length; i++) {
-                    subject = savedToDo[i]['header'];
-                    var divElement = document.createElement("div");
-                    divElement.id = subject.concat("List").replace(/\s/g, '');;
-
-                    var buttonElement = document.createElement("button");
-                    buttonElement.textContent = subject;
-                    buttonElement.setAttribute("onclick", "buttonClicked(this)");
-                    buttonElement.classList.add("subjectBtn");
-                    divElement.appendChild(buttonElement);
-
-                    for (var j = 0; j < savedToDo[i]['content'].length; j++) {
-                        var currItem = savedToDo[i]['content'][j];
-                        var listItem = document.createElement("li");
-                        listItem.setAttribute("contenteditable", "true");
-                        listItem.setAttribute("onkeydown", "addOrRemoveItem(event)");
-                        listItem.classList.add("todoListEntry");
-                        listItem.style.wordWrap = "break-word";
-                        listItem.style.wordBreak = "break-all";
-                        listItem.textContent = currItem;
-
-                        divElement.appendChild(listItem);
-
-                        var targetDiv = document.querySelector("#toDoList");
-                    }
-                    targetDiv.appendChild(divElement);
-                    targetDiv.appendChild(document.createElement("br"));
-                    targetDiv.appendChild(document.createElement("br"));
-                }
-            }
-        }
-
-        document.getElementById('work').addEventListener('input', function() {
+        document.getElementById('work').addEventListener('input', function () {
             localStorage.setItem('workDuration', this.value);
         });
 
-        document.getElementById('break').addEventListener('input', function() {
+        document.getElementById('break').addEventListener('input', function () {
             localStorage.setItem('breakDuration', this.value);
         });
 
-        document.getElementById('editableTable').addEventListener('input', function() {
+        document.getElementById('editableTable').addEventListener('input', function () {
             var storedEditableTable = document.getElementById("editableTable").getElementsByTagName('tbody')[0].innerHTML;
             localStorage.setItem('editableTable', storedEditableTable);
         });
-    </script>
 
+        document.getElementById('customNotes').addEventListener('input', function () {
+            localStorage.setItem('customNotes', this.value);
+        });
 
+        </script>
 </body>
 
 </html>
