@@ -410,7 +410,7 @@
         function removeRow() {
             var table = document.getElementById('editableTable');
             var rowCount = table.rows.length;
-            if (rowCount > 2) { // Ensure there are always at least 2 rows
+            if (rowCount > 1) { // Ensure there are always at least 2 rows
                 table.deleteRow(rowCount - 1);
             }
         }
